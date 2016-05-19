@@ -1,0 +1,64 @@
+<!DOCTYPE html>
+<html>
+    <head>
+        <title>connection</title>
+        
+        <link href="lib/ratchet/css/ratchet.min.css" rel="stylesheet">
+        
+        <script src="lib/ratchet/js/ratchet.min.js"></script>
+        <script type="text/javascript" src="http://code.jquery.com/jquery-1.9.1.min.js"></script>
+        
+        <meta name="apple-mobile-web-app-capable" content="yes">
+        <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no, user-scalable=no">
+    </head>
+    <body>
+        
+        <div class="content content-padded">
+            <h1 style="text-align: center;">Welcome</h1>
+        
+            <p>1. Go to Settings->API in OctoPrint</p>
+            <p>2. Check "Enable" & "Enable CORS"</p>
+            <p>3. Save</p>
+        
+            <input type="text" id="ip" placeholder="IP address">
+            <input type="text" id="apikey" placeholder="api key">
+            
+            <button class="btn btn-positive btn-block" id="connect">Connect</button>
+            
+            <h2 id="status" hidden>Connecting...</h2>
+        </div>
+        
+        
+        
+        <script>
+            var ip = localStorage.getItem("ip");
+            var apikey = localStorage.getItem("apikey");
+            $("#ip").val(ip);
+            $("#apikey").val(apikey);
+            
+            $("#connect").click(function(){
+                console.log("clicked");
+                
+                ip = $("#ip").val();
+                apikey = $("#apikey").val();
+                localStorage.setItem("ip", ip);
+                localStorage.setItem("apikey", apikey);
+                
+                
+                connect();
+                $("#status").show();
+            });
+            
+            function connect(){
+                $.ajaxSetup({headers:{"X-Api-Key" : apikey}});
+                $.getJSON("http://"+ip+"/api/version",function(json){
+                    console.log(json);
+                    $("#status").text("connected");
+                    window.location.href = "temperature.html";
+                }).error(function() {
+                    $("#status").text("failed to connect");
+                });
+            }
+        </script>
+    </body>
+</html>

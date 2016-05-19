@@ -1,0 +1,62 @@
+<!DOCTYPE html>
+<html>
+    <head>
+        <title>custom</title>
+        
+        <link href="lib/ratchet/css/ratchet.min.css" rel="stylesheet">
+        <link href="style.css" rel="stylesheet">
+        
+        <script src="lib/ratchet/js/ratchet.min.js"></script>
+        <script src="http://code.jquery.com/jquery-1.9.1.min.js"></script>
+        <script src="settings.js"></script>
+        
+        
+        <meta name="apple-mobile-web-app-capable" content="yes">
+        <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no, user-scalable=no">
+    </head>
+    <body>
+        <header class="bar bar-nav">
+            <a href="#popover">
+                <h1 class="title">
+                    Custom <span class="icon icon-caret"></span>
+                </h1>
+            </a>
+        </header>
+        <div id="popover" class="popover">
+            <header class="bar bar-nav">
+                <h1 class="title">Menu</h1>
+            </header>
+            <ul class="table-view">
+                <li class="table-view-cell"><a href="javascript:window.location.href='temperature.html'">Temperature</a></li>
+                <li class="table-view-cell"><a href="javascript:window.location.href='jog.html'">Jog</a></li>
+                <li class="table-view-cell"><a href="javascript:window.location.href='print.html'">Print</a></li>
+                <li class="table-view-cell"><a href="javascript:window.location.href='custom.html'">Custom</a></li>
+            </ul>
+        </div>
+        
+        <div class="content">
+            <ul class="table-view" id="menu"></ul>
+        </div>
+        
+        <script>
+            var ip = localStorage.getItem("ip");
+            var apikey = localStorage.getItem("apikey");
+            
+            $(document).ready(function(){
+                for(item in settings.custom){
+                    $("#menu").append("<li class='table-view-cell table-view-cell-thick'><a class='navigate-right' onclick='sendCommand(&quot;"+settings.custom[item].command+"&quot;)'>"+settings.custom[item].title+"</a></li>");
+                }
+            });
+            
+            function sendCommand(command){
+                $.ajaxSetup({headers:{"X-Api-Key" : apikey}});
+                $.ajax({
+                    url: "http://"+ip+"/api/printer/command",
+                    contentType: "application/json",
+                    data: JSON.stringify({"command": command}),
+                    method: "POST"
+                });
+            }
+        </script>
+    </body>
+</html>

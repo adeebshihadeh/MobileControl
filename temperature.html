@@ -1,0 +1,127 @@
+<!DOCTYPE html>
+<html>
+    <head>
+        <title>temperature</title>
+        
+        <link href="lib/ratchet/css/ratchet.min.css" rel="stylesheet">
+        <link href="lib/noUiSlider/nouislider.min.css" rel="stylesheet">
+        <link href="style.css" rel="stylesheet">
+        
+        <script src="lib/ratchet/js/ratchet.min.js"></script>
+        <script src="http://code.jquery.com/jquery-1.9.1.min.js"></script>
+        <script src="lib/noUiSlider/nouislider.min.js"></script>
+        
+        <meta name="apple-mobile-web-app-capable" content="yes">
+        <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no, user-scalable=no">
+    </head>
+    <body>
+        <header class="bar bar-nav">
+            <a href="#popover">
+                <h1 class="title">
+                    Temperature <span class="icon icon-caret"></span>
+                </h1>
+            </a>
+        </header>
+        <div id="popover" class="popover">
+            <header class="bar bar-nav">
+                <h1 class="title">Menu</h1>
+            </header>
+            <ul class="table-view">
+                <li class="table-view-cell"><a href="javascript:window.location.href='temperature.html'">Temperature</a></li>
+                <li class="table-view-cell"><a href="javascript:window.location.href='jog.html'">Jog</a></li>
+                <li class="table-view-cell"><a href="javascript:window.location.href='print.html'">Print</a></li>
+                <li class="table-view-cell"><a href="javascript:window.location.href='custom.html'">Custom</a></li>
+            </ul>
+        </div>
+        
+        <div class="content">
+            
+            <!-- Hotend -->
+            <div style="width: 100%; height:50%;">
+                <ul class="table-view"><li class="table-view-cell table-view-cell-thick"><a id="hotendTemp" style="font-size: 130%;">0C/0C</a><button class="btn btn-big"  onclick="setTemp('hotend')">Set</button></li></ul>
+                <div  id="hotendRange" style="width: 300px; margin-left: 75px; margin-top: 30px;"></div>
+            </div>
+            
+            <!-- Bed -->
+            <div style="width: 100%; height:50%;">
+                <ul class="table-view"><li class="table-view-cell table-view-cell-thick"><a id="bedTemp" style="font-size: 130%;">0C/0C</a><button class="btn btn-big"  onclick="setTemp('bed')">Set</button></li></ul>
+                <div  id="bedRange" style="width: 300px; margin-left: 75px; margin-top: 30px;"></div>
+            </div>
+        </div>
+        
+        <script>
+            var ip = localStorage.getItem("ip");
+            var apikey = localStorage.getItem("apikey");
+            var socket = new WebSocket("ws://"+ip+"/sockjs/websocket");
+            var info;
+            
+            $(document).ready(function(){
+                var hotendRange = document.getElementById('hotendRange');
+            
+                noUiSlider.create(hotendRange, {
+                    start: 0,
+                    step: 5,
+                    connect: "lower",
+                    direction: 'ltr',
+                    orientation: 'horizontal',
+                    behaviour: 'tap-drag',
+                    tooltips: true,
+                    range: {
+                        'min': 0,
+                        'max': 260
+                    }
+                });
+            });
+            
+            socket.onopen = function(){
+                var bedRange = document.getElementById('bedRange');
+                
+                noUiSlider.create(bedRange, {
+                    start: 0,
+                    step: 2,
+                    connect: "lower",
+                    direction: 'ltr',
+                    orientation: 'horizontal',
+                    behaviour: 'tap-drag',
+                    tooltips: true,
+                    range: {
+                        'min': 0,
+                        'max': 120
+                    }
+                });
+            }
+            
+            socket.onmessage = function(e){
+              //console.log(e.data);
+              info = JSON.parse(e.data);
+              if(info.current !== null && typeof(info.current.temps) !== "undefined"){
+                  updateTemperature(info);
+              }
+            };
+            
+            function setTemp(tool){
+                sendCommand((tool === "hotend" ? "M104 " : "M140" ) + " S" + (tool === "hotend" ? $("#hotendRange .noUi-tooltip").text() : $("#bedRange .noUi-tooltip").text() ));
+            }
+            
+            function updateTemperature(info){
+                $("#hotendTemp").text("Hotend: " + info.current.temps[0].tool0.actual+"C/"+info.current.temps[0].tool0.target+"C");
+                $("#bedTemp").text("Bed: " + info.current.temps[0].bed.actual+"C/"+info.current.temps[0].bed.target+"C");
+            }
+            
+            function sendCommand(command){
+                $.ajaxSetup({headers:{"X-Api-Key" : apikey}});
+                $.ajax({
+                    url: "http://"+ip+"/api/printer/command",
+                    contentType: "application/json",
+                    data: JSON.stringify({"command": command}),
+                    method: "POST"
+                });
+            }
+            
+            // prevent elastic scrolling
+            document.body.addEventListener("touchmove", function(event) {
+                event.preventDefault();
+            });
+        </script>
+    </body>
+</html>
