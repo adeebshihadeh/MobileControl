@@ -42,6 +42,9 @@
             <div id="printing" class="content-padded" style="text-align: center;">
                 <progress class="progress" id="progress" value="0" max="100">50%</progress>
                 <h3 id="filename"></h3>
+                
+                <button class="btn btn-lg btn-danger" id="cancel" onclick="jobOperation('cancel')">Cancel</button>
+                <button class="btn btn-lg btn-primary" id="pause" onclick="jobOperation('pause')">Pause</button>
             </div>
         </div>
         
@@ -62,12 +65,14 @@
                 
                  info = JSON.parse(e.data);
                 
-                if(info.current.state.flags.printing){
+                if(info.current.state.flags.printing || info.current.state.flags.paused){
                     $("#printing").show();
                     $("#files").hide();
                     
                     $("#filename").text(info.current.job.file.name);
                     $("#progress").attr("value", info.current.progress.completion);
+                    
+                    $("#pause").text(info.current.state.flags.paused ? "Resume" : "Pause");
                 }else {
                     $("#files").show();
                     $("#printing").hide();
@@ -86,6 +91,17 @@
                     }
                 });
             }
+            
+            function jobOperation(operation){
+                $.ajaxSetup({headers:{"X-Api-Key" : apikey}});
+                $.ajax({
+                    url: "http://"+ip+"/api/job",
+                    contentType: "application/json",
+                    data: JSON.stringify({"command": operation}),
+                    method: "POST"
+                });
+            }
+            
             
             function printFile(filename, local){
                 if(confirm("Do you want to print " + filename + "?")){
