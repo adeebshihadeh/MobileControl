@@ -53,6 +53,8 @@
         </div>
         
         <script>
+            var printing = false;
+            
             machine.connect();
             
             $(document).ready(function(){
@@ -77,13 +79,22 @@
                     $("#progress").attr("value", info.current.progress.completion);
                     
                     $("#pause").html(info.current.state.flags.paused ? "<span class='icon icon-play'></span> Resume" : "<span class='icon icon-pause'></span> Pause");
+                    
+                    printing = true;    
                 }else {
                     $("#files").show();
                     $("#printing").hide();
+                    
+                    printing = false;
                 }
             };
             
+            window.setInterval(function(){
+                if(!printing){ displayFiles(); }
+            }, 10000);
+            
             function displayFiles(){  
+                $("#files").empty();
                 $.ajaxSetup({headers:{"X-Api-Key" : machine.apikey}, async: false});
                 $.getJSON("http://"+machine.ip+"/api/files", function(e){
                     for(index in e.files){
@@ -93,13 +104,7 @@
             }
             
             function jobOperation(operation){
-                $.ajaxSetup({headers:{"X-Api-Key" : apikey}});
-                $.ajax({
-                    url: "http://"+ip+"/api/job",
-                    contentType: "application/json",
-                    data: JSON.stringify({"command": operation}),
-                    method: "POST"
-                });
+                machine.jobOperation(operation);
             }
             
             function printFile(filename, local){

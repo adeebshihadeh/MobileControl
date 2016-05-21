@@ -51,7 +51,6 @@ var machine = {
         $.ajaxSetup({headers:{"X-Api-Key" : this.apikey}, async: false});
         $.getJSON("http://"+this.ip+"/api/files", function(e){
             console.log(e);
-            
             return e.files;
         });
     },
@@ -61,6 +60,15 @@ var machine = {
             url: "http://"+this.ip+"/api/files/"+(local ? "local" : "sd")+"/"+filename,
             contentType: "application/json",
             data: JSON.stringify({"command": "select", "print": true}),
+            method: "POST"
+        });
+    },
+    jobOperation: function(operation){
+        $.ajaxSetup({headers:{"X-Api-Key" : this.apikey}});
+        $.ajax({
+            url: "http://"+this.ip+"/api/job",
+            contentType: "application/json",
+            data: JSON.stringify({"command": operation}),
             method: "POST"
         });
     }
