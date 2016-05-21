@@ -38,40 +38,40 @@
         
         <div class="content content-padded">
              <div class="btn-group btn-group-lg" role="group" style="margin-bottom: 8px;">
-                <button type="button" class="btn btn-primary" onclick="jog('X', -1)"><span class="icon icon-left"></span></button>
-                <button type="button" class="btn btn-primary" onclick="sendCommand('G28X')">Home X</button>
-                <button type="button" class="btn btn-primary" onclick="jog('X', 1)"><span class="icon icon-right"></span></button>
+                <button type="button" class="btn btn-primary" ontouchstart="jog('X', -1)"><span class="icon icon-left"></span></button>
+                <button type="button" class="btn btn-primary" ontouchstart="sendCommand('G28X')">Home X</button>
+                <button type="button" class="btn btn-primary" ontouchstart="jog('X', 1)"><span class="icon icon-right"></span></button>
             </div>
             
              <div class="btn-group btn-group-lg" role="group" style="margin-bottom: 8px;">
-                <button type="button" class="btn btn-primary" onclick="jog('Y', -1)"><span class="icon icon-left"></span></button>
-                <button type="button" class="btn btn-primary" onclick="sendCommand('G28Y')">Home Y</button>
-                <button type="button" class="btn btn-primary" onclick="jog('Y', 1)"><span class="icon icon-right"></span></button>
+                <button type="button" class="btn btn-primary" ontouchstart="jog('Y', -1)"><span class="icon icon-left"></span></button>
+                <button type="button" class="btn btn-primary" ontouchstart="sendCommand('G28Y')">Home Y</button>
+                <button type="button" class="btn btn-primary" ontouchstart="jog('Y', 1)"><span class="icon icon-right"></span></button>
             </div>
             
             <div class="btn-group btn-group-lg" role="group" style="margin-bottom: 8px;">
-                <button type="button" class="btn btn-primary" onclick="jog('Z', -1)"><span class="icon icon-left"></span></button>
-                <button type="button" class="btn btn-primary" onclick="sendCommand('G28Z')">Home Z</button>
-                <button type="button" class="btn btn-primary" onclick="jog('Z', 1)"><span class="icon icon-right"></span></button>
+                <button type="button" class="btn btn-primary" ontouchstart="jog('Z', -1)"><span class="icon icon-left"></span></button>
+                <button type="button" class="btn btn-primary" ontouchstart="sendCommand('G28Z')">Home Z</button>
+                <button type="button" class="btn btn-primary" ontouchstart="jog('Z', 1)"><span class="icon icon-right"></span></button>
             </div>
             
             
             <div class="btn-group btn-group-lg" data-toggle="buttons">
-                <label class="btn btn-primary" onclick="setIncrement(0.1)">
+                <label class="btn btn-primary" ontouchstart="setIncrement(0.1)">
                     <input type="radio" autocomplete="off"> 0.1
                 </label>
-                <label class="btn btn-primary" onclick="setIncrement(1)">
+                <label class="btn btn-primary" ontouchstart="setIncrement(1)">
                     <input type="radio" autocomplete="off"> 1
                 </label>
-                <label class="btn btn-primary active" onclick="setIncrement(10)">
+                <label class="btn btn-primary active" ontouchstart="setIncrement(10)">
                     <input type="radio" autocomplete="off" checked> 10
                 </label>
-                <label class="btn btn-primary" onclick="setIncrement(100)">
+                <label class="btn btn-primary" ontouchstart="setIncrement(100)">
                     <input type="radio" autocomplete="off"> 100
                 </label>
             </div>
             
-            <button type="button" class="btn btn-primary btn-big" onclick="sendCommand('M18')">Motors Off</button>
+            <button type="button" class="btn btn-primary btn-big" ontouchstart="sendCommand('M18')">Motors Off</button>
             
         </div>
         

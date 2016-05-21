@@ -46,7 +46,7 @@
             
             $(document).ready(function(){
                 for(item in settings.custom){
-                    $("#menu").append("<li class='table-view-cell table-view-cell-thick'><a class='navigate-right' onclick='sendCommand(&quot;"+settings.custom[item].command+"&quot;)'>"+settings.custom[item].title+"</a></li>");
+                    $("#menu").append("<li class='table-view-cell table-view-cell-thick'><a class='navigate-right' ontouchstart='sendCommand(&quot;"+settings.custom[item].command+"&quot;)'>"+settings.custom[item].title+"</a></li>");
                 }
             });
             

@@ -46,8 +46,8 @@
                 <progress class="progress" id="progress" value="0" max="100">50%</progress>
                 <h3 id="filename"></h3>
                 
-                <button class="btn btn-lg btn-danger" id="cancel" onclick="jobOperation('cancel')">  <span class="icon icon-stop"></span> Cancel</button>
-                <button class="btn btn-lg btn-primary" id="pause" onclick="jobOperation('pause')">Pause</button>
+                <button class="btn btn-lg btn-danger" id="cancel" ontouchstart="jobOperation('cancel')">  <span class="icon icon-stop"></span> Cancel</button>
+                <button class="btn btn-lg btn-primary" id="pause" ontouchstart="jobOperation('pause')">Pause</button>
             </div>
         </div>
         
@@ -96,7 +96,7 @@
                 $.ajaxSetup({headers:{"X-Api-Key" : apikey}});
                 $.getJSON("http://"+ip+"/api/files", function(e){
                     for(index in e.files){
-                        $("#files").append("<li class='table-view-cell table-view-cell-thick'><a class='navigate-right' style='text-decoration: none;' onclick='printFile(&quot;"+e.files[index].name+"&quot;, "+(e.files[index].origin === "local" ? true :  false)+")'>"+e.files[index].name+"</a></li>");
+                        $("#files").append("<li class='table-view-cell table-view-cell-thick'><a class='navigate-right' style='text-decoration: none;' ontouchstart='printFile(&quot;"+e.files[index].name+"&quot;, "+(e.files[index].origin === "local" ? true :  false)+")'>"+e.files[index].name+"</a></li>");
                     }
                 });
             }
