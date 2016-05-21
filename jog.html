@@ -11,6 +11,7 @@
         <script src="lib/ratchet/js/ratchet.min.js"></script>
         <script src="http://code.jquery.com/jquery-1.9.1.min.js"></script>
         <script src="https://maxcdn.bootstrapcdn.com/bootstrap/4.0.0-alpha.2/js/bootstrap.min.js" integrity="sha384-vZ2WRJMwsjRMW/8U7i6PWi6AlO1L79snBrmgiDpgIWJ82z8eA5lenwvxbMV1PAh7" crossorigin="anonymous"></script>
+        <script src="machine.js"></script>
         
         <meta name="apple-mobile-web-app-capable" content="yes">
         <link rel="apple-touch-icon" href="graphics/icon.png">
@@ -39,19 +40,19 @@
         <div class="content content-padded">
              <div class="btn-group btn-group-lg" role="group" style="margin-bottom: 8px;">
                 <button type="button" class="btn btn-primary" ontouchstart="jog('X', -1)"><span class="icon icon-left"></span></button>
-                <button type="button" class="btn btn-primary" ontouchstart="sendCommand('G28X')">Home X</button>
+                <button type="button" class="btn btn-primary" ontouchstart="home('X')">Home X</button>
                 <button type="button" class="btn btn-primary" ontouchstart="jog('X', 1)"><span class="icon icon-right"></span></button>
             </div>
             
              <div class="btn-group btn-group-lg" role="group" style="margin-bottom: 8px;">
                 <button type="button" class="btn btn-primary" ontouchstart="jog('Y', -1)"><span class="icon icon-left"></span></button>
-                <button type="button" class="btn btn-primary" ontouchstart="sendCommand('G28Y')">Home Y</button>
+                <button type="button" class="btn btn-primary" ontouchstart="home('Y')">Home Y</button>
                 <button type="button" class="btn btn-primary" ontouchstart="jog('Y', 1)"><span class="icon icon-right"></span></button>
             </div>
             
             <div class="btn-group btn-group-lg" role="group" style="margin-bottom: 8px;">
                 <button type="button" class="btn btn-primary" ontouchstart="jog('Z', -1)"><span class="icon icon-left"></span></button>
-                <button type="button" class="btn btn-primary" ontouchstart="sendCommand('G28Z')">Home Z</button>
+                <button type="button" class="btn btn-primary" ontouchstart="home('Z')">Home Z</button>
                 <button type="button" class="btn btn-primary" ontouchstart="jog('Z', 1)"><span class="icon icon-right"></span></button>
             </div>
             
@@ -76,43 +77,25 @@
         </div>
         
         <script>
-            var ip = localStorage.getItem("ip");
-            var apikey = localStorage.getItem("apikey");
-            var socket = new WebSocket("ws://"+ip+"/sockjs/websocket");
-            
             var increment = 10;
             
-            socket.onclose = function(e){
-                window.location.href = "reconnect.html";  
-            };
+            machine.connect();
             
             function setIncrement(i){
                 increment = i;
             }
             
             function sendCommand(command){
-                $.ajaxSetup({headers:{"X-Api-Key" : apikey}});
-                $.ajax({
-                    url: "http://"+ip+"/api/printer/command",
-                    contentType: "application/json",
-                    data: JSON.stringify({"command": command}),
-                    method: "POST"
-                });
+                machine.sendCommand(command);
             }
             
-            function sendCommands(commands){
-                $.ajaxSetup({headers:{"X-Api-Key" : apikey}});
-                $.ajax({
-                    url: "http://"+ip+"/api/printer/command",
-                    contentType: "application/json",
-                    data: JSON.stringify({"commands": commands}),
-                    method: "POST"
-                });
+            function home(axis){
+                machine.home(axis);
             }
             
             function jog(axis, direction){
                 var feedrate = (axis === "Z"? settings.jog.zFeedrate : settings.jog.xyFeedrate);
-                sendCommands(["G91", "G1 " + axis + increment*direction + " F" + feedrate, "G90"]);
+                machine.jogAxis(axis, direction, increment, feedrate);
             }
             
             // prevent elastic scrolling

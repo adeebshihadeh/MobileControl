@@ -10,6 +10,7 @@
         <script src="lib/ratchet/js/ratchet.min.js"></script>
         <script src="http://code.jquery.com/jquery-1.9.1.min.js"></script>
         <script src="settings.js"></script>
+        <script src="machine.js"></script>
         
         
         <meta name="apple-mobile-web-app-capable" content="yes">
@@ -43,7 +44,8 @@
         <script>
             var ip = localStorage.getItem("ip");
             var apikey = localStorage.getItem("apikey");
-            var socket = new WebSocket("ws://"+ip+"/sockjs/websocket");
+            
+            machine.connect();
             
             $(document).ready(function(){
                 for(item in settings.custom){
@@ -51,18 +53,8 @@
                 }
             });
             
-            socket.onclose = function(){
-                window.location.href = "reconnect.html";  
-            };
-            
             function sendCommand(command){
-                $.ajaxSetup({headers:{"X-Api-Key" : apikey}});
-                $.ajax({
-                    url: "http://"+ip+"/api/printer/command",
-                    contentType: "application/json",
-                    data: JSON.stringify({"command": command}),
-                    method: "POST"
-                });
+                machine.sendCommand(command);
             }
         </script>
     </body>

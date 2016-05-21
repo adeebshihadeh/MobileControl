@@ -11,6 +11,7 @@
         <script src="lib/ratchet/js/ratchet.min.js"></script>
         <script src="http://code.jquery.com/jquery-1.9.1.min.js"></script>
         <script src="lib/noUiSlider/nouislider.min.js"></script>
+        <script src="machine.js"></script>
         
         <meta name="apple-mobile-web-app-capable" content="yes">
         <link rel="apple-touch-icon" href="graphics/icon.png">
@@ -52,21 +53,15 @@
         </div>
         
         <script>
-            var ip = localStorage.getItem("ip");
-            var apikey = localStorage.getItem("apikey");
-            var socket = new WebSocket("ws://"+ip+"/sockjs/websocket"); 
-            var info;
-            var files;
+            machine.connect();
             
             $(document).ready(function(){
                 displayFiles();
                 $("#printing").hide();
             });
             
-            socket.onmessage = function(e){
-                console.log(e.data);
-                
-                 info = JSON.parse(e.data);
+            machine.socket.onmessage = function(e){
+                var info = JSON.parse(e.data);
                 
                 if(info.current.state.flags.printing || info.current.state.flags.paused){
                     $("#printing").show();
@@ -88,13 +83,9 @@
                 }
             };
             
-            socket.onclose = function(e){
-                window.location.href = "reconnect.html";  
-            };
-            
-            function displayFiles(){
-                $.ajaxSetup({headers:{"X-Api-Key" : apikey}});
-                $.getJSON("http://"+ip+"/api/files", function(e){
+            function displayFiles(){  
+                $.ajaxSetup({headers:{"X-Api-Key" : machine.apikey}, async: false});
+                $.getJSON("http://"+machine.ip+"/api/files", function(e){
                     for(index in e.files){
                         $("#files").append("<li class='table-view-cell table-view-cell-thick'><a class='navigate-right' style='text-decoration: none;' onclick='printFile(&quot;"+e.files[index].name+"&quot;, "+(e.files[index].origin === "local" ? true :  false)+")'>"+e.files[index].name+"</a></li>");
                     }
@@ -111,16 +102,9 @@
                 });
             }
             
-            
             function printFile(filename, local){
                 if(confirm("Do you want to print " + filename + "?")){
-                    $.ajaxSetup({headers:{"X-Api-Key" : apikey}});
-                    $.ajax({
-                        url: "http://"+ip+"/api/files/"+(local ? "local" : "sd")+"/"+filename,
-                        contentType: "application/json",
-                        data: JSON.stringify({"command": "select", "print": true}),
-                        method: "POST"
-                    });
+                    machine.printFile(filename, local);
                 }
             }
         </script>

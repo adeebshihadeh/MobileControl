@@ -11,6 +11,7 @@
         <script src="lib/ratchet/js/ratchet.min.js"></script>
         <script src="http://code.jquery.com/jquery-1.9.1.min.js"></script>
         <script src="lib/noUiSlider/nouislider.min.js"></script>
+        <script src="machine.js"></script>
         
         <meta name="apple-mobile-web-app-capable" content="yes">
         <link rel="apple-touch-icon" href="graphics/icon.png">
@@ -54,8 +55,9 @@
         <script>
             var ip = localStorage.getItem("ip");
             var apikey = localStorage.getItem("apikey");
-            var socket = new WebSocket("ws://"+ip+"/sockjs/websocket");
             var info;
+            
+            machine.connect();
             
             $(document).ready(function(){
                 var hotendRange = document.getElementById('hotendRange');
@@ -75,7 +77,7 @@
                 });
             });
             
-            socket.onopen = function(){
+            machine.socket.onopen = function(){
                 var bedRange = document.getElementById('bedRange');
                 
                 noUiSlider.create(bedRange, {
@@ -91,9 +93,9 @@
                         'max': settings.temperature.bedMax
                     }
                 });
-            }
+            };
             
-            socket.onmessage = function(e){
+            machine.socket.onmessage = function(e){
               //console.log(e.data);
               info = JSON.parse(e.data);
               if(info.current.temps !== null && info.current.temps.length > 0){
@@ -101,12 +103,8 @@
               }
             };
             
-            socket.onclose = function(e){
-                window.location.href = "reconnect.html";  
-            };
-            
             function setTemp(tool){
-                sendCommand((tool === "hotend" ? "M104 " : "M140" ) + " S" + (tool === "hotend" ? $("#hotendRange .noUi-tooltip").text() : $("#bedRange .noUi-tooltip").text() ));
+                machine.sendCommand((tool === "hotend" ? "M104 " : "M140" ) + " S" + (tool === "hotend" ? $("#hotendRange .noUi-tooltip").text() : $("#bedRange .noUi-tooltip").text() ));
             }
             
             function updateTemperature(info){
@@ -115,13 +113,7 @@
             }
             
             function sendCommand(command){
-                $.ajaxSetup({headers:{"X-Api-Key" : apikey}});
-                $.ajax({
-                    url: "http://"+ip+"/api/printer/command",
-                    contentType: "application/json",
-                    data: JSON.stringify({"command": command}),
-                    method: "POST"
-                });
+                machine.sendCommand(command);
             }
             
             // prevent elastic scrolling
