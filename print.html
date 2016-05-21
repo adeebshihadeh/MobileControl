@@ -50,6 +50,7 @@
             var apikey = localStorage.getItem("apikey");
             var socket = new WebSocket("ws://"+ip+"/sockjs/websocket"); 
             var info;
+            var files;
             
             $(document).ready(function(){
                 displayFiles();
@@ -81,9 +82,21 @@
                 $.ajaxSetup({headers:{"X-Api-Key" : apikey}});
                 $.getJSON("http://"+ip+"/api/files", function(e){
                     for(index in e.files){
-                        $("#files").append("<li class='table-view-cell table-view-cell-thick'><a class='navigate-right' onclick='printFile("+index+")'>"+e.files[index].name+"</a></li>");
+                        $("#files").append("<li class='table-view-cell table-view-cell-thick'><a class='navigate-right' style='text-decoration: none;' onclick='printFile(&quot;"+e.files[index].name+"&quot;, "+(e.files[index].origin === "local" ? true :  false)+")'>"+e.files[index].name+"</a></li>");
                     }
                 });
+            }
+            
+            function printFile(filename, local){
+                if(confirm("Do you want to print " + filename + "?")){
+                    $.ajaxSetup({headers:{"X-Api-Key" : apikey}});
+                    $.ajax({
+                        url: "http://"+ip+"/api/files/"+(local ? "local" : "sd")+"/"+filename,
+                        contentType: "application/json",
+                        data: JSON.stringify({"command": "select", "print": true}),
+                        method: "POST"
+                    });
+                }
             }
         </script>
     </body>

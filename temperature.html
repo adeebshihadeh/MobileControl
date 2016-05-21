@@ -95,7 +95,7 @@
             socket.onmessage = function(e){
               //console.log(e.data);
               info = JSON.parse(e.data);
-              if(info.current !== null && typeof(info.current.temps) !== "undefined"){
+              if(info.current !== null && info.current.temps !== null){
                   updateTemperature(info);
               }
             };

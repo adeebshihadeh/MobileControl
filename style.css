@@ -12,4 +12,5 @@
     top: 55px;
     left: 50%;
     position: fixed;
+    display: none;
 }
