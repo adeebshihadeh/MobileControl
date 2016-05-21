@@ -5,3 +5,11 @@
 .table-view-cell-thick {
     padding: 15px 65px 15px 15px;
 }
+
+
+/* Fixes bootstrap/ratchet issue */
+.popover {
+    top: 55px;
+    left: 50%;
+    position: fixed;
+}

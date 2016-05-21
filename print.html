@@ -1,10 +1,11 @@
 <!DOCTYPE html>
 <html>
     <head>
-        <title>temperature</title>
+        <title>print</title>
         
         <link href="lib/ratchet/css/ratchet.min.css" rel="stylesheet">
         <link href="lib/noUiSlider/nouislider.min.css" rel="stylesheet">
+        <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/4.0.0-alpha.2/css/bootstrap.min.css" integrity="sha384-y3tfxAZXuh4HwSYylfB+J125MxIs6mR5FOHamPBG064zB+AFeWH94NdvaCBm8qnd" crossorigin="anonymous">
         <link href="style.css" rel="stylesheet">
         
         <script src="lib/ratchet/js/ratchet.min.js"></script>
@@ -37,15 +38,40 @@
         
         <div class="content">
             <ul class="table-view" id="files"></ul>
+            
+            <div id="printing" class="content-padded" style="text-align: center;">
+                <progress class="progress" id="progress" value="0" max="100">50%</progress>
+                <h3 id="filename"></h3>
+            </div>
         </div>
         
         <script>
             var ip = localStorage.getItem("ip");
             var apikey = localStorage.getItem("apikey");
+            var socket = new WebSocket("ws://"+ip+"/sockjs/websocket"); 
+            var info;
             
             $(document).ready(function(){
                 displayFiles();
+                $("#printing").hide();
             });
+            
+            socket.onmessage = function(e){
+                console.log(e.data);
+                
+                 info = JSON.parse(e.data);
+                
+                if(info.current.state.flags.printing){
+                    $("#printing").show();
+                    $("#files").hide();
+                    
+                    $("#filename").text(info.current.job.file.name);
+                    $("#progress").attr("value", info.current.progress.completion);
+                }else {
+                    $("#files").show();
+                    $("#printing").hide();
+                }
+            };
             
             function displayFiles(){
                 $.ajaxSetup({headers:{"X-Api-Key" : apikey}});
