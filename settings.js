@@ -3,6 +3,10 @@ var settings = {
         "xyFeedrate": 3000,
         "zFeedrate": 200
     },
+    "temperature": {
+        "hotendMax": 260, // max hotend temperature
+        "bedMax": 120 // max bed temperature
+    },
     "custom": [
         {
             "title": "Fan On",
