@@ -96,7 +96,7 @@
                 $.ajaxSetup({headers:{"X-Api-Key" : apikey}});
                 $.getJSON("http://"+ip+"/api/files", function(e){
                     for(index in e.files){
-                        $("#files").append("<li class='table-view-cell table-view-cell-thick'><a class='navigate-right' style='text-decoration: none;' ontouchstart='printFile(&quot;"+e.files[index].name+"&quot;, "+(e.files[index].origin === "local" ? true :  false)+")'>"+e.files[index].name+"</a></li>");
+                        $("#files").append("<li class='table-view-cell table-view-cell-thick'><a class='navigate-right' style='text-decoration: none;' onclick='printFile(&quot;"+e.files[index].name+"&quot;, "+(e.files[index].origin === "local" ? true :  false)+")'>"+e.files[index].name+"</a></li>");
                     }
                 });
             }

@@ -4,6 +4,7 @@
         <title>custom</title>
         
         <link href="lib/ratchet/css/ratchet.min.css" rel="stylesheet">
+        <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/4.0.0-alpha.2/css/bootstrap.min.css" integrity="sha384-y3tfxAZXuh4HwSYylfB+J125MxIs6mR5FOHamPBG064zB+AFeWH94NdvaCBm8qnd" crossorigin="anonymous">
         <link href="style.css" rel="stylesheet">
         
         <script src="lib/ratchet/js/ratchet.min.js"></script>
@@ -36,7 +37,7 @@
         </div>
         
         <div class="content">
-            <ul class="table-view" id="menu"></ul>
+            <div class="list-group" id="menu"></div>
         </div>
         
         <script>
@@ -46,7 +47,7 @@
             
             $(document).ready(function(){
                 for(item in settings.custom){
-                    $("#menu").append("<li class='table-view-cell table-view-cell-thick'><a class='navigate-right' ontouchstart='sendCommand(&quot;"+settings.custom[item].command+"&quot;)'>"+settings.custom[item].title+"</a></li>");
+                    $("#menu").append("<button type='button' class='list-group-item list-group-item-big' ontouchstart='sendCommand(&quot;"+settings.custom[item].command+"&quot;)'>"+settings.custom[item].title+"</button>");
                 }
             });
             
