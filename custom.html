@@ -42,12 +42,17 @@
         <script>
             var ip = localStorage.getItem("ip");
             var apikey = localStorage.getItem("apikey");
+            var socket = new WebSocket("ws://"+ip+"/sockjs/websocket");
             
             $(document).ready(function(){
                 for(item in settings.custom){
                     $("#menu").append("<li class='table-view-cell table-view-cell-thick'><a class='navigate-right' onclick='sendCommand(&quot;"+settings.custom[item].command+"&quot;)'>"+settings.custom[item].title+"</a></li>");
                 }
             });
+            
+            socket.onclose = function(){
+                window.location.href = "reconnect.html";  
+            };
             
             function sendCommand(command){
                 $.ajaxSetup({headers:{"X-Api-Key" : apikey}});

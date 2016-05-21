@@ -73,6 +73,10 @@
                 }
             };
             
+            socket.onclose = function(e){
+                window.location.href = "reconnect.html";  
+            };
+            
             function displayFiles(){
                 $.ajaxSetup({headers:{"X-Api-Key" : apikey}});
                 $.getJSON("http://"+ip+"/api/files", function(e){

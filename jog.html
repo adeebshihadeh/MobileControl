@@ -78,8 +78,13 @@
         <script>
             var ip = localStorage.getItem("ip");
             var apikey = localStorage.getItem("apikey");
+            var socket = new WebSocket("ws://"+ip+"/sockjs/websocket");
             
             var increment = 10;
+            
+            socket.onclose = function(e){
+                window.location.href = "reconnect.html";  
+            };
             
             function setIncrement(i){
                 increment = i;

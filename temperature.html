@@ -100,6 +100,10 @@
               }
             };
             
+            socket.onclose = function(e){
+                window.location.href = "reconnect.html";  
+            };
+            
             function setTemp(tool){
                 sendCommand((tool === "hotend" ? "M104 " : "M140" ) + " S" + (tool === "hotend" ? $("#hotendRange .noUi-tooltip").text() : $("#bedRange .noUi-tooltip").text() ));
             }
