@@ -40,10 +40,13 @@
             <ul class="table-view" id="files"></ul>
             
             <div id="printing" class="content-padded" style="text-align: center;">
+                <h4 id="hotend"></h4>
+                <h4 id="bed"></h4>
+                
                 <progress class="progress" id="progress" value="0" max="100">50%</progress>
                 <h3 id="filename"></h3>
                 
-                <button class="btn btn-lg btn-danger" id="cancel" onclick="jobOperation('cancel')">Cancel</button>
+                <button class="btn btn-lg btn-danger" id="cancel" onclick="jobOperation('cancel')">  <span class="icon icon-stop"></span> Cancel</button>
                 <button class="btn btn-lg btn-primary" id="pause" onclick="jobOperation('pause')">Pause</button>
             </div>
         </div>
@@ -69,10 +72,16 @@
                     $("#printing").show();
                     $("#files").hide();
                     
+                    if(info.current.temps !== null && info.current.temps.length > 0){
+                        $("#hotend").text("Hotend: " + info.current.temps[0].tool0.actual+"C/"+info.current.temps[0].tool0.target+"C");
+                        $("#bed").text("Bed: " + info.current.temps[0].bed.actual+"C/"+info.current.temps[0].bed.target+"C");
+                    }
+                    
+                    
                     $("#filename").text(info.current.job.file.name);
                     $("#progress").attr("value", info.current.progress.completion);
                     
-                    $("#pause").text(info.current.state.flags.paused ? "Resume" : "Pause");
+                    $("#pause").html(info.current.state.flags.paused ? "<span class='icon icon-play'></span> Resume" : "<span class='icon icon-pause'></span> Pause");
                 }else {
                     $("#files").show();
                     $("#printing").hide();
