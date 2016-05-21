@@ -53,8 +53,6 @@
         </div>
         
         <script>
-            var ip = localStorage.getItem("ip");
-            var apikey = localStorage.getItem("apikey");
             var info;
             
             machine.connect();
@@ -96,11 +94,10 @@
             };
             
             machine.socket.onmessage = function(e){
-              //console.log(e.data);
-              info = JSON.parse(e.data);
-              if(info.current.temps !== null && info.current.temps.length > 0){
-                  updateTemperature(info);
-              }
+                info = JSON.parse(e.data);
+                if(info.current.temps !== null && info.current.temps.length > 0){
+                    updateTemperature(info);
+                }
             };
             
             function setTemp(tool){
