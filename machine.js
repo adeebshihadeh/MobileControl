@@ -10,7 +10,7 @@ var machine = {
         localStorage.setItem("apikey", this.apikey);
     },
     connect: function(){
-        this.socket = new WebSocket("ws:///"+this.ip+"/sockjs/websocket");
+        this.socket = new WebSocket("ws://"+this.ip+"/sockjs/websocket");
         
         this.socket.onopen = function(){
             console.log("socket opened");  
