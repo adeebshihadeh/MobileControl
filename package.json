@@ -18,6 +18,7 @@
   "homepage": "https://github.com/quillford/MobileControl#readme",
   "dependencies": {
     "bootstrap": "^4.0.0-alpha.2",
+    "font-awesome": "^4.6.1",
     "jquery": "^2.2.4"
   }
 }
