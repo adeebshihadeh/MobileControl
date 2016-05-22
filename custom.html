@@ -3,58 +3,56 @@
     <head>
         <title>custom</title>
         
-        <link href="lib/ratchet/css/ratchet.min.css" rel="stylesheet">
-        <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/4.0.0-alpha.2/css/bootstrap.min.css" integrity="sha384-y3tfxAZXuh4HwSYylfB+J125MxIs6mR5FOHamPBG064zB+AFeWH94NdvaCBm8qnd" crossorigin="anonymous">
+        <link rel="stylesheet" href="node_modules/bootstrap/dist/css/bootstrap.min.css">
         <link href="style.css" rel="stylesheet">
         
-        <script src="lib/ratchet/js/ratchet.min.js"></script>
-        <script src="http://code.jquery.com/jquery-1.9.1.min.js"></script>
+        <script type="text/javascript" src="node_modules/jquery/dist/jquery.min.js"></script>
+        <script src="node_modules/bootstrap/dist/js/bootstrap.min.js"></script>
         <script src="settings.js"></script>
         <script src="machine.js"></script>
-        
         
         <meta name="apple-mobile-web-app-capable" content="yes">
         <link rel="apple-touch-icon" href="graphics/icon.png">
         <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no, user-scalable=no">
     </head>
     <body>
-        <header class="bar bar-nav">
-            <a href="#popover">
-                <h1 class="title">
-                    Custom <span class="icon icon-caret"></span>
-                </h1>
-            </a>
+        <header class="menu-bar">
+            <div class="menu-bar-title">
+                <div class="btn-group">
+                    <button type="button" class="btn btn-secondary dropdown-toggle" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
+                        Custom
+                    </button>
+                    <div class="dropdown-menu" style="width: 280px; margin-left: -90px;">
+                        <a class="dropdown-item" href="#">Menu</a>
+                        <div class="dropdown-divider"></div>
+                        <a class="dropdown-item menu-item" href="javascript:window.location.href='temperature.html'">Temperature</a>
+                        <a class="dropdown-item menu-item" href="javascript:window.location.href='jog.html'">Jog</a>
+                        <a class="dropdown-item menu-item" href="javascript:window.location.href='print.html'">Print</a>
+                        <a class="dropdown-item menu-item" href="javascript:window.location.href='custom.html'">Custom</a>
+                    </div>
+                </div>
+            </div>
         </header>
-        <div id="popover" class="popover">
-            <header class="bar bar-nav">
-                <h1 class="title">Menu</h1>
-            </header>
-            <ul class="table-view">
-                <li class="table-view-cell"><a href="javascript:window.location.href='temperature.html'">Temperature</a></li>
-                <li class="table-view-cell"><a href="javascript:window.location.href='jog.html'">Jog</a></li>
-                <li class="table-view-cell"><a href="javascript:window.location.href='print.html'">Print</a></li>
-                <li class="table-view-cell"><a href="javascript:window.location.href='custom.html'">Custom</a></li>
-            </ul>
-        </div>
         
         <div class="content">
-            <div class="list-group" id="menu"></div>
+            <div class="list-group" id="menu" style="margin-top: 10px;"></div>
         </div>
         
         <script>
-            var ip = localStorage.getItem("ip");
-            var apikey = localStorage.getItem("apikey");
-            
             machine.connect();
             
             $(document).ready(function(){
                 for(item in settings.custom){
-                    $("#menu").append("<button type='button' class='list-group-item list-group-item-big' ontouchstart='sendCommand(&quot;"+settings.custom[item].command+"&quot;)'>"+settings.custom[item].title+"</button>");
+                    $("#menu").append("<button type='button' class='list-group-item' ontouchstart='"+(typeof(settings.custom[item].command) === "undefined" ? "sendCommands" : "sendCommand")+"("+(typeof(settings.custom[item].command) === "undefined" ? JSON.stringify(settings.custom[item].commands) : "&quot;" + settings.custom[item].command + "&quot;")+")'>"+settings.custom[item].title+"</button>");
                 }
             });
             
             function sendCommand(command){
                 machine.sendCommand(command);
+            }
+            
+            function sendCommands(commands){
+                machine.sendCommands(commands);
             }
         </script>
     </body>

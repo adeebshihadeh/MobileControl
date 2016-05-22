@@ -23,6 +23,14 @@ var settings = {
         {
             "title": "Hotend Fan Off",
             "command": "M43" 
+        },
+        {
+            "title": "Extrude 10mm",
+            "commands": ["G91", "G1 E10", "G90"]
+        },
+        {
+            "title": "Retract 10mm",
+            "commands": ["G91", "G1 E-10", "G90"]
         }
     ]
 };

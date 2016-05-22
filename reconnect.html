@@ -3,10 +3,10 @@
     <head>
         <title>reconnect</title>
         
-        <link href="lib/ratchet/css/ratchet.min.css" rel="stylesheet">
+        <link href="node_modules/bootstrap/dist/css/bootstrap.min.css" rel="stylesheet">
         
-        <script src="lib/ratchet/js/ratchet.min.js"></script>
-        <script type="text/javascript" src="http://code.jquery.com/jquery-1.9.1.min.js"></script>
+        <script type="text/javascript" src="node_modules/jquery/dist/jquery.min.js"></script>
+        <script src="settings.js"></script>
         
         <meta name="apple-mobile-web-app-capable" content="yes">
         <link rel="apple-touch-icon" href="graphics/icon.png">
@@ -14,13 +14,17 @@
     </head>
     <body>
         
-        <div class="content content-padded" style="text-align: center;">
+        <div style="text-align: center; padding: 15px;">
             <h1>Unable to Connect</h1>
-        
+            
+            <br>
+            
             <p>Make sure your OctoPrint server is up and you are on the same network as it.</p>
             
-            <a class="btn btn-primary btn-block" href="javascript:window.location.href='index.html'">Edit Connection Info</a>
+            <br>
             
+            <a class="btn btn-primary btn-lg btn-block" href="javascript:window.location.href='index.html'">Edit Connection Info</a>
+            s
             <h2 id="status" hidden>Connecting...</h2>
         </div>
         
@@ -46,6 +50,11 @@
                     $("#status").text("failed to connect");
                 });
             }
+            
+            // prevent elastic scrolling
+            document.body.addEventListener("touchmove", function(event) {
+                event.preventDefault();
+            });
         </script>
     </body>
 </html>

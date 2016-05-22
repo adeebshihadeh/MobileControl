@@ -3,10 +3,10 @@
     <head>
         <title>connection</title>
         
-        <link href="lib/ratchet/css/ratchet.min.css" rel="stylesheet">
+        <link href="node_modules/bootstrap/dist/css/bootstrap.min.css" rel="stylesheet">
         
-        <script src="lib/ratchet/js/ratchet.min.js"></script>
-        <script type="text/javascript" src="http://code.jquery.com/jquery-1.9.1.min.js"></script>
+        <script type="text/javascript" src="node_modules/jquery/dist/jquery.min.js"></script>
+        <script src="machine.js"></script>
         
         <meta name="apple-mobile-web-app-capable" content="yes">
         <link rel="apple-touch-icon" href="graphics/icon.png">
@@ -14,17 +14,21 @@
     </head>
     <body>
         
-        <div class="content content-padded">
+        <div style="padding: 15px;">
             <h1 style="text-align: center;">Welcome</h1>
-        
-            <p>1. Go to Settings->API in OctoPrint</p>
-            <p>2. Check "Enable" & "Enable CORS"</p>
-            <p>3. Save</p>
-        
-            <input type="text" id="ip" placeholder="IP address">
-            <input type="text" id="apikey" placeholder="api key">
             
-            <button class="btn btn-positive btn-block" id="connect">Connect</button>
+            <p>
+                1. Go to Settings->API in OctoPrint
+                </br>
+                2. Check "Enable" & "Enable CORS"
+                </br>
+                3. Save
+            <p>
+        
+            <input type="text" class="form-control" id="ip" style="margin-bottom: 8px;" placeholder="IP address">
+            <input type="text" class="form-control" id="apikey" style="margin-bottom: 8px;" placeholder="api key">
+            
+            <button class="btn btn-primary btn-lg btn-block" id="connect">Connect</button>
             
             <h2 id="status" hidden>Connecting...</h2>
         </div>
@@ -32,27 +36,24 @@
         
         
         <script>
-            var ip = localStorage.getItem("ip");
-            var apikey = localStorage.getItem("apikey");
-            $("#ip").val(ip);
-            $("#apikey").val(apikey);
+            $("#ip").val(machine.ip);
+            $("#apikey").val(machine.apikey);
+            
+            if(machine.ip !== null && machine.apikey !== null){
+                connect();
+            }
             
             $("#connect").click(function(){
-                console.log("clicked");
-                
-                ip = $("#ip").val();
-                apikey = $("#apikey").val();
-                localStorage.setItem("ip", ip);
-                localStorage.setItem("apikey", apikey);
-                
+                machine.setIp( $("#ip").val() );
+                machine.setApikey( $("#apikey").val() );
                 
                 connect();
                 $("#status").show();
             });
             
             function connect(){
-                $.ajaxSetup({headers:{"X-Api-Key" : apikey}});
-                $.getJSON("http://"+ip+"/api/version",function(json){
+                $.ajaxSetup({headers:{"X-Api-Key" : machine.apikey}});
+                $.getJSON("http://"+machine.ip+"/api/version",function(json){
                     console.log(json);
                     $("#status").text("connected");
                     window.location.href = "temperature.html";

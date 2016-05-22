@@ -1,8 +1,13 @@
 var machine = {
     ip: localStorage.getItem("ip"),
     apikey: localStorage.getItem("apikey"),
-    getIp: function(){
-        return ip;
+    setIp: function(ip){
+        this.ip = ip;
+        localStorage.setItem("ip", this.ip);
+    },
+    setApikey: function(apikey){
+        this.apikey = apikey;
+        localStorage.setItem("apikey", this.apikey);
     },
     connect: function(){
         this.socket = new WebSocket("ws:///"+this.ip+"/sockjs/websocket");
@@ -19,9 +24,16 @@ var machine = {
             window.location.href = "reconnect.html"; 
         };
     },
-    setIp: function(ip){
-        this.ip = ip;
-        localStorage.setItem("ip", this.ip);
+    testConenction: function(){
+        console.log(this.ip)
+        var i = this.ip;
+        var ap = this.apikey;
+        $.ajaxSetup({headers:{"X-Api-Key" : ap}, async: true});
+        $.getJSON("http://"+i+"/api/version",function(json){
+            
+        }).error(function() {
+            return "false";
+        });
     },
     sendCommand: function(command){
         $.ajaxSetup({headers:{"X-Api-Key" : this.apikey}});
@@ -45,7 +57,7 @@ var machine = {
         this.sendCommands(["G91", "G1 " + axis + increment*direction + " F" + feedrate, "G90"]);
     },
     home: function(axis){
-        this.sendCommand("G28" + axis);
+        this.sendCommand("G28 " + axis);
     },
     getFiles: function(){
         $.ajaxSetup({headers:{"X-Api-Key" : this.apikey}, async: false});

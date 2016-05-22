@@ -2,19 +2,53 @@
     font-size: 22px;
 }
 
-.table-view-cell-thick {
-    padding: 15px 65px 15px 15px;
-}
-
-.list-group-item-big {
-    font-size: 135%;
-}
-
-/* Fixes bootstrap/ratchet issue */
-.popover {
-    top: 55px;
-    left: 50%;
+.menu-bar {
     position: fixed;
-    display: none;
-    font-size: 1rem;
+    top: 0;
+    right: 0;
+    left: 0;
+    z-index: 10;
+    height: 50px;
+    border-bottom: 1px solid #ddd;
+    padding-right: 10px;
+    padding-left: 10px;
+    display: block;
+    background: #fff;
+}
+
+.menu-bar~.content {
+    padding-top: 50px;
+}
+
+.menu-bar-title {
+    position: absolute;
+    width: 100%;
+    text-align: center;
+    line-height: 50px;
+    font-size: 18px;
+    padding: 0;
+    color: #000;
+}
+
+.menu-item {
+    font-size: 110%;
+    padding-top: 8px;
+    padding-bottom: 8px;
+}
+
+.list-group-item {
+    border-left: 0px;
+    border-right: 0px;
+    border-top-left-radius: 0;
+    padding: 1rem 1.25rem;
+}
+
+.list-group-item:first-child {
+    border-top-left-radius: 0px;
+    border-top-right-radius: 0px;
+}
+
+.list-group-item:last-child {
+    border-bottom-left-radius: 0px;
+    border-bottom-right-radius: 0px;
 }

@@ -3,13 +3,12 @@
     <head>
         <title>print</title>
         
-        <link href="lib/ratchet/css/ratchet.min.css" rel="stylesheet">
         <link href="lib/noUiSlider/nouislider.min.css" rel="stylesheet">
-        <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/4.0.0-alpha.2/css/bootstrap.min.css" integrity="sha384-y3tfxAZXuh4HwSYylfB+J125MxIs6mR5FOHamPBG064zB+AFeWH94NdvaCBm8qnd" crossorigin="anonymous">
+        <link rel="stylesheet" href="node_modules/bootstrap/dist/css/bootstrap.min.css">
         <link href="style.css" rel="stylesheet">
         
-        <script src="lib/ratchet/js/ratchet.min.js"></script>
-        <script src="http://code.jquery.com/jquery-1.9.1.min.js"></script>
+        <script type="text/javascript" src="node_modules/jquery/dist/jquery.min.js"></script>
+        <script src="node_modules/bootstrap/dist/js/bootstrap.min.js"></script>
         <script src="lib/noUiSlider/nouislider.min.js"></script>
         <script src="machine.js"></script>
         
@@ -18,33 +17,32 @@
         <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no, user-scalable=no">
     </head>
     <body>
-        <header class="bar bar-nav">
-            <a href="#popover">
-                <h1 class="title">
-                    Print <span class="icon icon-caret"></span>
-                </h1>
-            </a>
+        <header class="menu-bar">
+            <div class="menu-bar-title">
+                <div class="btn-group">
+                    <button type="button" class="btn btn-secondary dropdown-toggle" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
+                        Print
+                    </button>
+                    <div class="dropdown-menu" style="width: 280px; margin-left: -90px;">
+                        <a class="dropdown-item" href="#">Menu</a>
+                        <div class="dropdown-divider"></div>
+                        <a class="dropdown-item menu-item" href="javascript:window.location.href='temperature.html'">Temperature</a>
+                        <a class="dropdown-item menu-item" href="javascript:window.location.href='jog.html'">Jog</a>
+                        <a class="dropdown-item menu-item" href="javascript:window.location.href='print.html'">Print</a>
+                        <a class="dropdown-item menu-item" href="javascript:window.location.href='custom.html'">Custom</a>
+                    </div>
+                </div>
+            </div>
         </header>
-        <div id="popover" class="popover">
-            <header class="bar bar-nav">
-                <h1 class="title">Menu</h1>
-            </header>
-            <ul class="table-view">
-                <li class="table-view-cell"><a href="javascript:window.location.href='temperature.html'">Temperature</a></li>
-                <li class="table-view-cell"><a href="javascript:window.location.href='jog.html'">Jog</a></li>
-                <li class="table-view-cell"><a href="javascript:window.location.href='print.html'">Print</a></li>
-                <li class="table-view-cell"><a href="javascript:window.location.href='custom.html'">Custom</a></li>
-            </ul>
-        </div>
         
         <div class="content">
-            <ul class="table-view" id="files"></ul>
+            <div class="list-group" id="files" style="margin-top: 8px;"></div>
             
-            <div id="printing" class="content-padded" style="text-align: center;">
+            <div id="printing" class="" style="text-align: center; padding: 15px;">
                 <h4 id="hotend"></h4>
                 <h4 id="bed"></h4>
                 
-                <progress class="progress" id="progress" value="0" max="100">50%</progress>
+                <progress class="progress" id="progress" value="0" max="100"></progress>
                 <h3 id="filename"></h3>
                 
                 <button class="btn btn-lg btn-danger" id="cancel" ontouchstart="jobOperation('cancel')">  <span class="icon icon-stop"></span> Cancel</button>
@@ -65,40 +63,48 @@
             machine.socket.onmessage = function(e){
                 var info = JSON.parse(e.data);
                 
-                if(info.current.state.flags.printing || info.current.state.flags.paused){
-                    $("#printing").show();
-                    $("#files").hide();
-                    
-                    if(info.current.temps !== null && info.current.temps.length > 0){
-                        $("#hotend").text("Hotend: " + info.current.temps[0].tool0.actual+"C/"+info.current.temps[0].tool0.target+"C");
-                        $("#bed").text("Bed: " + info.current.temps[0].bed.actual+"C/"+info.current.temps[0].bed.target+"C");
-                    }
-                    
-                    
-                    $("#filename").text(info.current.job.file.name);
-                    $("#progress").attr("value", info.current.progress.completion);
-                    
-                    $("#pause").html(info.current.state.flags.paused ? "<span class='icon icon-play'></span> Resume" : "<span class='icon icon-pause'></span> Pause");
-                    
-                    printing = true;    
-                }else {
-                    $("#files").show();
-                    $("#printing").hide();
-                    
-                    printing = false;
+                if(info.current !== null){
+                    if(info.current.state.flags.printing || info.current.state.flags.paused){
+                        $("#printing").show();
+                        $("#files").hide();
+                        
+                        if(info.current.temps !== null && info.current.temps.length > 0){
+                            $("#hotend").text("Hotend: " + info.current.temps[0].tool0.actual+"C/"+info.current.temps[0].tool0.target+"C");
+                            $("#bed").text("Bed: " + info.current.temps[0].bed.actual+"C/"+info.current.temps[0].bed.target+"C");
+                        }
+                        
+                        
+                        $("#filename").text(info.current.job.file.name);
+                        $("#progress").attr("value", info.current.progress.completion);
+                        
+                        $("#pause").html(info.current.state.flags.paused ? "<span class='icon icon-play'></span> Resume" : "<span class='icon icon-pause'></span> Pause");
+                        
+                        printing = true;
+                    }else {
+                        $("#files").show();
+                        $("#printing").hide();
+                        
+                        updater = 
+                        
+                        printing = false;
+                    }  
                 }
+                
             };
             
             window.setInterval(function(){
-                if(!printing){ displayFiles(); }
+                if(!printing){
+                    displayFiles();
+                    console.log("updating files");
+                }
             }, 10000);
             
-            function displayFiles(){  
+            function displayFiles(){
                 $("#files").empty();
                 $.ajaxSetup({headers:{"X-Api-Key" : machine.apikey}, async: false});
                 $.getJSON("http://"+machine.ip+"/api/files", function(e){
                     for(index in e.files){
-                        $("#files").append("<li class='table-view-cell table-view-cell-thick'><a class='navigate-right' style='text-decoration: none;' onclick='printFile(&quot;"+e.files[index].name+"&quot;, "+(e.files[index].origin === "local" ? true :  false)+")'>"+e.files[index].name+"</a></li>");
+                        $("#files").append("<button type='button' class='list-group-item' onclick='printFile(&quot;"+e.files[index].name+"&quot;, "+(e.files[index].origin === "local" ? true :  false)+")'>"+e.files[index].name+"</button>");
                     }
                 });
             }
