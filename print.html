@@ -76,6 +76,7 @@
                         
                         $("#filename").text(info.current.job.file.name);
                         $("#progress").attr("value", info.current.progress.completion);
+                        $("#progress").html(Math.round(info.current.progress.completion));
                         
                         $("#pause").html(info.current.state.flags.paused ? "<span class='icon icon-play'></span> Resume" : "<span class='icon icon-pause'></span> Pause");
                         
