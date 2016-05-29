@@ -29,6 +29,7 @@ var machine = {
         };
         
         this.socket.onclose = function(){
+            console.log("socket closed");
             switchPage("reconnect");
         };
     },

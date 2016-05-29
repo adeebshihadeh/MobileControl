@@ -1,4 +1,6 @@
 <script>
+    var currentPage;
+    
     if(!machine.ip || !machine.apikey){
         window.location.href = "connect.html";
     }
@@ -8,10 +10,18 @@
     $(document).ready(function(){
         $(".page").hide();
         switchPage("print");
+        currentPage = "print";
     });
     
     function switchPage(page){
         $(".page").hide();
         $("#"+page).show();
+        currentPage = page;
     }
+    
+    // prevent elastic scrolling
+    document.body.addEventListener("touchmove", function(event) {
+        if(currentPage === "jog" || currentPage === "reconnect" || currentPage === "temperature")
+        event.preventDefault();
+    });
 </script>

@@ -234,6 +234,8 @@
 
 </div>
 <script>
+    var currentPage;
+    
     if(!machine.ip || !machine.apikey){
         window.location.href = "connect.html";
     }
@@ -243,12 +245,20 @@
     $(document).ready(function(){
         $(".page").hide();
         switchPage("print");
+        currentPage = "print";
     });
     
     function switchPage(page){
         $(".page").hide();
         $("#"+page).show();
+        currentPage = page;
     }
+    
+    // prevent elastic scrolling
+    document.body.addEventListener("touchmove", function(event) {
+        if(currentPage === "jog" || currentPage === "reconnect" || currentPage === "temperature")
+        event.preventDefault();
+    });
 </script>
 <script>
     $(document).ready(function(){
@@ -349,32 +359,24 @@
     }
 </script>
 <script>
-    var ip = localStorage.getItem("ip");
-    var apikey = localStorage.getItem("apikey");
-    $("#ip").val(ip);
-    $("#apikey").val(apikey);
-    
     $(document).ready(function(){
         window.setInterval(function(){
-            reconnect();
+            if($("#reconnect").is(":visible")){
+                reconnect();
+            }
         }, 10000);
     });
     
     function reconnect(){
-        $.ajaxSetup({headers:{"X-Api-Key" : apikey}});
-        $.getJSON("http://"+ip+"/api/version",function(json){
+        $.ajaxSetup({headers:{"X-Api-Key" : machine.apikey}});
+        $.getJSON("http://"+machine.ip+"/api/version",function(json){
             console.log(json);
             $("#status").text("connected");
-            switchPage("temperature")
+            switchPage("temperature");
         }).error(function() {
             $("#status").text("failed to connect");
         });
     }
-    
-    // prevent elastic scrolling
-    document.body.addEventListener("touchmove", function(event) {
-        event.preventDefault();
-    });
 </script>
 <script>
     var hotendRange, bedRange;
