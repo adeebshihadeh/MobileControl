@@ -39,10 +39,6 @@
             $("#ip").val(machine.ip);
             $("#apikey").val(machine.apikey);
             
-            if(machine.ip !== null && machine.apikey !== null){
-                connect();
-            }
-            
             $("#connect").click(function(){
                 machine.setIp( $("#ip").val() );
                 machine.setApikey( $("#apikey").val() );

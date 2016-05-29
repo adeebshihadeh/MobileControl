@@ -42,7 +42,7 @@
                 <h4 id="hotend"></h4>
                 <h4 id="bed"></h4>
                 
-                <progress class="progress" id="progress" value="0" max="100"></progress>
+                <progress class="progress" id="progress" value="0" max="100"><h3 id="alternate-progress"></h3></progress>
                 <h3 id="filename"></h3>
                 
                 <button class="btn btn-lg btn-danger" id="cancel" ontouchstart="jobOperation('cancel')">  <span class="icon icon-stop"></span> Cancel</button>
@@ -63,12 +63,12 @@
             machine.socket.onmessage = function(e){
                 var info = JSON.parse(e.data);
                 
-                if(info.current !== null){
+                if(info.current){
                     if(info.current.state.flags.printing || info.current.state.flags.paused){
                         $("#printing").show();
                         $("#files").hide();
                         
-                        if(info.current.temps !== null && info.current.temps.length > 0){
+                        if(info.current.temps && info.current.temps.length){
                             $("#hotend").text("Hotend: " + info.current.temps[0].tool0.actual+"C/"+info.current.temps[0].tool0.target+"C");
                             $("#bed").text("Bed: " + info.current.temps[0].bed.actual+"C/"+info.current.temps[0].bed.target+"C");
                         }
@@ -76,7 +76,7 @@
                         
                         $("#filename").text(info.current.job.file.name);
                         $("#progress").attr("value", info.current.progress.completion);
-                        $("#progress").html(Math.round(info.current.progress.completion));
+                        $("#alternate-progress").html(Math.round(info.current.progress.completion)+"%");
                         
                         $("#pause").html(info.current.state.flags.paused ? "<span class='icon icon-play'></span> Resume" : "<span class='icon icon-pause'></span> Pause");
                         
@@ -84,8 +84,6 @@
                     }else {
                         $("#files").show();
                         $("#printing").hide();
-                        
-                        updater = 
                         
                         printing = false;
                     }  
@@ -96,7 +94,6 @@
             window.setInterval(function(){
                 if(!printing){
                     displayFiles();
-                    console.log("updating files");
                 }
             }, 10000);
             
