@@ -1,0 +1,97 @@
+
+<header class="menu-bar">
+    <div class="menu-bar-title">
+        <div class="btn-group">
+            <button type="button" class="btn btn-secondary dropdown-toggle" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
+                Print
+            </button>
+            <div class="dropdown-menu" style="width: 280px; margin-left: -90px;">
+                <a class="dropdown-item" href="#">Menu</a>
+                <div class="dropdown-divider"></div>
+                <a class="dropdown-item menu-item" href="javascript:switchPage('temperature')">Temperature</a>
+                <a class="dropdown-item menu-item" href="javascript:switchPage('jog')">Jog</a>
+                <a class="dropdown-item menu-item" href="javascript:switchPage('print')">Print</a>
+                <a class="dropdown-item menu-item" href="javascript:switchPage('custom')">Custom</a>
+            </div>
+        </div>
+    </div>
+</header>
+
+<div class="content">
+    <div class="list-group" id="files" style="margin-top: 8px;"></div>
+    
+    <div id="printing" class="" style="text-align: center; padding: 15px;">
+        <h4 id="hotend"></h4>
+        <h4 id="bed"></h4>
+        
+        <progress class="progress" id="progress" value="0" max="100"><h3 id="alternate-progress"></h3></progress>
+        <h3 id="filename"></h3>
+        
+        <button class="btn btn-lg btn-danger" id="cancel" ontouchstart="jobOperation('cancel')">  <span class="icon icon-stop"></span> Cancel</button>
+        <button class="btn btn-lg btn-primary" id="pause" ontouchstart="jobOperation('pause')">Pause</button>
+    </div>
+</div>
+
+<script>
+    var printing = false;
+    
+    $(document).ready(function(){
+        displayFiles();
+        $("#printing").hide();
+    });
+    
+    machine.addCallback("updatePrintInfo", updatePrintInfo);
+    
+    window.setInterval(function(){
+        if(!printing){
+            displayFiles();
+        }
+    }, 10000);
+    
+    function displayFiles(){
+        $("#files").empty();
+        $.ajaxSetup({headers:{"X-Api-Key" : machine.apikey}, async: false});
+        $.getJSON("http://"+machine.ip+"/api/files", function(e){
+            for(index in e.files){
+                $("#files").append("<button type='button' class='list-group-item' onclick='printFile(&quot;"+e.files[index].name+"&quot;, "+(e.files[index].origin === "local" ? true :  false)+")'>"+e.files[index].name+"</button>");
+            }
+        });
+    }
+    
+    function updatePrintInfo(info){
+        if(info.current){
+            if(info.current.state.flags.printing || info.current.state.flags.paused){
+                $("#printing").show();
+                $("#files").hide();
+                
+                if(info.current.temps && info.current.temps.length){
+                    $("#hotend").text("Hotend: " + info.current.temps[0].tool0.actual+"C/"+info.current.temps[0].tool0.target+"C");
+                    $("#bed").text("Bed: " + info.current.temps[0].bed.actual+"C/"+info.current.temps[0].bed.target+"C");
+                }
+                
+                $("#filename").text(info.current.job.file.name);
+                $("#progress").attr("value", info.current.progress.completion);
+                $("#alternate-progress").html(Math.round(info.current.progress.completion)+"%");
+                
+                $("#pause").html(info.current.state.flags.paused ? "<span class='icon icon-play'></span> Resume" : "<span class='icon icon-pause'></span> Pause");
+                
+                printing = true;
+            }else {
+                $("#files").show();
+                $("#printing").hide();
+                
+                printing = false;
+            }  
+        }
+    }
+    
+    function jobOperation(operation){
+        machine.jobOperation(operation);
+    }
+    
+    function printFile(filename, local){
+        if(confirm("Do you want to print " + filename + "?")){
+            machine.printFile(filename, local);
+        }
+    }
+</script>

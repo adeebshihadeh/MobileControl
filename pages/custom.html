@@ -1,0 +1,37 @@
+<header class="menu-bar">
+    <div class="menu-bar-title">
+        <div class="btn-group">
+            <button type="button" class="btn btn-secondary dropdown-toggle" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
+                Custom
+            </button>
+            <div class="dropdown-menu" style="width: 280px; margin-left: -90px;">
+                <a class="dropdown-item" href="#">Menu</a>
+                <div class="dropdown-divider"></div>
+                <a class="dropdown-item menu-item" href="javascript:switchPage('temperature')">Temperature</a>
+                <a class="dropdown-item menu-item" href="javascript:switchPage('jog')">Jog</a>
+                <a class="dropdown-item menu-item" href="javascript:switchPage('print')">Print</a>
+                <a class="dropdown-item menu-item" href="javascript:switchPage('custom')">Custom</a>
+            </div>
+        </div>
+    </div>
+</header>
+
+<div class="content">
+    <div class="list-group" id="menu" style="margin-top: 10px;"></div>
+</div>
+
+<script>
+    $(document).ready(function(){
+        for(item in settings.custom){
+            $("#menu").append("<button type='button' class='list-group-item' ontouchstart='"+(typeof(settings.custom[item].command) === "undefined" ? "sendCommands" : "sendCommand")+"("+(typeof(settings.custom[item].command) === "undefined" ? JSON.stringify(settings.custom[item].commands) : "&quot;" + settings.custom[item].command + "&quot;")+")'>"+settings.custom[item].title+"</button>");
+        }
+    });
+    
+    function sendCommand(command){
+        machine.sendCommand(command);
+    }
+    
+    function sendCommands(commands){
+        machine.sendCommands(commands);
+    }
+</script>

@@ -1,0 +1,42 @@
+<div style="text-align: center; padding: 15px;">
+    <h1>Unable to Connect</h1>
+    
+    <br>
+    
+    <p>Make sure your OctoPrint server is up and you are on the same network as it.</p>
+    
+    <br>
+    
+    <a class="btn btn-primary btn-lg btn-block" href="javascript:window.location.href='../connect.html'">Edit Connection Info</a>
+    
+    <h2 id="status" hidden>Connecting...</h2>
+</div>
+
+<script>
+    var ip = localStorage.getItem("ip");
+    var apikey = localStorage.getItem("apikey");
+    $("#ip").val(ip);
+    $("#apikey").val(apikey);
+    
+    $(document).ready(function(){
+        window.setInterval(function(){
+            reconnect();
+        }, 10000);
+    });
+    
+    function reconnect(){
+        $.ajaxSetup({headers:{"X-Api-Key" : apikey}});
+        $.getJSON("http://"+ip+"/api/version",function(json){
+            console.log(json);
+            $("#status").text("connected");
+            switchPage("temperature")
+        }).error(function() {
+            $("#status").text("failed to connect");
+        });
+    }
+    
+    // prevent elastic scrolling
+    document.body.addEventListener("touchmove", function(event) {
+        event.preventDefault();
+    });
+</script>

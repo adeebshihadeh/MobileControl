@@ -1,0 +1,17 @@
+<script>
+    if(!machine.ip || !machine.apikey){
+        window.location.href = "connect.html";
+    }
+    
+    machine.connect();
+    
+    $(document).ready(function(){
+        $(".page").hide();
+        switchPage("print");
+    });
+    
+    function switchPage(page){
+        $(".page").hide();
+        $("#"+page).show();
+    }
+</script>

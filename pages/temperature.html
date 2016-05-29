@@ -1,0 +1,112 @@
+<header class="menu-bar">
+    <div class="menu-bar-title">
+        <div class="btn-group">
+            <button type="button" class="btn btn-secondary dropdown-toggle" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
+                Temperature
+            </button>
+            <div class="dropdown-menu" style="width: 280px; margin-left: -90px;">
+                <a class="dropdown-item" href="#">Menu</a>
+                <div class="dropdown-divider"></div>
+                <a class="dropdown-item menu-item" href="javascript:switchPage('temperature')">Temperature</a>
+                <a class="dropdown-item menu-item" href="javascript:switchPage('jog')">Jog</a>
+                <a class="dropdown-item menu-item" href="javascript:switchPage('print')">Print</a>
+                <a class="dropdown-item menu-item" href="javascript:switchPage('custom')">Custom</a>
+            </div>
+        </div>
+    </div>
+</header>
+
+<div class="content" style="margin-top: 8px;">
+    
+    <!-- Hotend -->
+    <div style="width: 100%; height:50%;">
+        <div class="container">
+            <div class="row" style="height: 40px;">
+                <p class="col-xs-8" id="hotendTemp" style="font-size: 130%; text-decoration: none;">0C/0C</p>
+                <div class="col-xs-4 btn-group">
+                    <button class="btn btn-danger" style="width:50%; float: left;"  ontouchstart="setHeaterOff('hotend')">Off</button>
+                    <button class="btn btn-primary" style="width:50%;"  ontouchstart="setTemp('hotend')">Set</button>
+                </div>
+            </div>
+        </div>
+        <div  id="hotendRange" style="width: 300px; margin-left: 75px; margin-top: 30px;"></div>
+    </div>
+    
+    <!-- Bed -->
+    <div style="width: 100%; height:50%; margin-top: 10px;">
+        <div class="container">
+            <div class="row" style="height: 40px;">
+                <p class="col-xs-8" id="bedTemp" style="font-size: 130%; text-decoration: none;">0C/0C</p>
+                <div class="col-xs-4 btn-group">
+                    <button class="btn btn-danger" style="width:50%; float: left;"  ontouchstart="setHeaterOff('bed')">Off</button>
+                    <button class="btn btn-primary" style="width:50%;"  ontouchstart="setTemp('bed')">Set</button>
+                </div>
+            </div>
+        </div>
+        <div  id="bedRange" style="width: 300px; margin-left: 75px; margin-top: 35px;"></div>
+    </div>
+
+</div>
+
+
+
+<script>
+    var hotendRange, bedRange;
+    
+    $(document).ready(function(){
+        hotendRange = document.getElementById('hotendRange');
+    
+        noUiSlider.create(hotendRange, {
+            start: 0,
+            step: 5,
+            connect: "lower",
+            direction: 'ltr',
+            orientation: 'horizontal',
+            behaviour: 'tap-drag',
+            tooltips: true,
+            range: {
+                'min': 0,
+                'max': settings.temperature.hotendMax
+            }
+        });
+    });
+    
+    window.onload = function(){
+        bedRange = document.getElementById('bedRange');
+        
+        noUiSlider.create(bedRange, {
+            start: 50,
+            step: 2,
+            connect: "lower",
+            direction: 'ltr',
+            orientation: 'horizontal',
+            behaviour: 'tap-drag',
+            tooltips: true,
+            range: {
+                'min': 0,
+                'max': settings.temperature.bedMax
+            }
+        });
+    };
+    
+    machine.addCallback("updateTemperature", updateTemperature);
+    
+    function setTemp(tool){
+        machine.sendCommand((tool === "hotend" ? "M104 " : "M140" ) + " S" + (tool === "hotend" ? $("#hotendRange .noUi-tooltip").text() : $("#bedRange .noUi-tooltip").text() ));
+    }
+    
+    function setHeaterOff(tool){
+        machine.sendCommand((tool === "hotend" ? "M104 " : "M140" ) + " S0");
+    }
+    
+    function updateTemperature(info){
+        if(info.current && info.current.temps && info.current.temps.length){
+            $("#hotendTemp").html("Hotend: " + info.current.temps[0].tool0.actual+"C/"+info.current.temps[0].tool0.target+"C" + (info.current.temps[0].tool0.target > 0 ? ' <span class="label label-danger">Heating</span>' : ""));
+            $("#bedTemp").html("Bed: " + info.current.temps[0].bed.actual+"C/"+info.current.temps[0].bed.target+"C" + (info.current.temps[0].bed.target > 0 ? ' <span class="label label-danger">Heating</span>' : ""));
+        }
+    }
+    
+    function sendCommand(command){
+        machine.sendCommand(command);
+    }
+</script>

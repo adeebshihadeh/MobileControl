@@ -1,6 +1,8 @@
 var machine = {
     ip: localStorage.getItem("ip"),
     apikey: localStorage.getItem("apikey"),
+    rawInfo: {},
+    callbacks: {},
     setIp: function(ip){
         this.ip = ip;
         localStorage.setItem("ip", this.ip);
@@ -16,13 +18,23 @@ var machine = {
             console.log("socket opened");  
         };
         
-        this.socket.onmessage = function(){
+        this.socket.onmessage = function(e){
             console.log("you have mail");
+            
+            rawInfo = JSON.parse(e.data);
+            
+            for(callback in machine.callbacks){
+                machine.callbacks[callback](rawInfo);
+            }
         };
         
         this.socket.onclose = function(){
-            window.location.href = "reconnect.html"; 
+            switchPage("reconnect");
         };
+    },
+    addCallback: function(name, func){
+        console.log(typeof(func));
+        this.callbacks[name] = func;
     },
     testConenction: function(){
         console.log(this.ip)
@@ -83,5 +95,8 @@ var machine = {
             data: JSON.stringify({"command": operation}),
             method: "POST"
         });
+    },
+    getRawInfo: function(){
+        return rawInfo;
     }
 };

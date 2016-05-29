@@ -1,0 +1,105 @@
+<header class="menu-bar">
+    <div class="menu-bar-title">
+        <div class="btn-group">
+            <button type="button" class="btn btn-secondary dropdown-toggle" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
+                Jog
+            </button>
+            <div class="dropdown-menu" style="width: 280px; margin-left: -90px;">
+                <a class="dropdown-item" href="#">Menu</a>
+                <div class="dropdown-divider"></div>
+                <a class="dropdown-item menu-item" href="javascript:switchPage('temperature')">Temperature</a>
+                <a class="dropdown-item menu-item" href="javascript:switchPage('jog')">Jog</a>
+                <a class="dropdown-item menu-item" href="javascript:switchPage('print')">Print</a>
+                <a class="dropdown-item menu-item" href="javascript:switchPage('custom')">Custom</a>
+            </div>
+        </div>
+    </div>
+</header>
+
+<div class="content" style="padding: 60px; padding-left: 30px; padding-right: 15px; ">
+    
+    <div class="container">
+        <div class="row">
+        
+            <div class="container" style="width: 50%; margin: 0; margin-bottom: 10px; float: left;">
+                <div class="row">
+                    <div class="col-xs-4"></div>
+                    <div class="col-xs-4">
+                        <button type="button" class="btn btn-primary btn-lg" ontouchstart="jog('Y', 1)"> <i class="fa fa-arrow-up"></i> </button>
+                    </div>
+                    <div class="col-xs-4"></div>
+                </div>
+                <div class="row" style="margin-top: 8px; margin-bottom: 8px;">
+                    <div class="col-xs-4">
+                        <button type="button" class="btn btn-primary btn-lg" ontouchstart="jog('X', -1)"> <i class="fa fa-arrow-left"></i> </button>
+                    </div>
+                    <div class="col-xs-4">
+                        <button type="button" class="btn btn-primary btn-lg" ontouchstart="home('XY')"> <i class="fa fa-home"></i> </button>
+                    </div>
+                    <div class="col-xs-4">
+                        <button type="button" class="btn btn-primary btn-lg" ontouchstart="jog('X', 1)"> <i class="fa fa-arrow-right"></i> </button>
+                    </div>
+                </div>
+                <div class="row">
+                    <div class="col-xs-4"></div>
+                    <div class="col-xs-4">
+                        <button type="button" class="btn btn-primary btn-lg" ontouchstart="jog('Y', -1)"> <i class="fa fa-arrow-down"></i> </button>
+                    </div>
+                    <div class="col-xs-4"></div>
+                </div>
+            </div>
+            
+            <div class="container" style="width: 75px; margin: 0; margin-bottom: 10px; margin-right: 40px; float: right;">
+                <div class="row">
+                    <button type="button" class="btn btn-primary btn-lg" ontouchstart="jog('Z', 1)"> <i class="fa fa-arrow-up"></i> </button>
+                </div>
+                <div class="row" style="margin-top: 8px; margin-bottom: 8px;">
+                    <button type="button" class="btn btn-primary btn-lg" ontouchstart="home('Z')"> <i class="fa fa-home"></i> </button>
+                </div>
+                <div class="row">
+                    <button type="button" class="btn btn-primary btn-lg" ontouchstart="jog('Z', -1)"> <i class="fa fa-arrow-down"></i> </button>
+                </div>
+            </div>
+            
+        </div>
+        <div class="row">
+            <div class="btn-group btn-group-lg" data-toggle="buttons">
+                <label class="btn btn-primary" ontouchstart="setIncrement(0.1)">
+                    <input type="radio" autocomplete="off"> 0.1
+                </label>
+                <label class="btn btn-primary" ontouchstart="setIncrement(1)">
+                    <input type="radio" autocomplete="off"> 1
+                </label>
+                <label class="btn btn-primary active" ontouchstart="setIncrement(10)">
+                    <input type="radio" autocomplete="off" checked> 10
+                </label>
+                <label class="btn btn-primary" ontouchstart="setIncrement(100)">
+                    <input type="radio" autocomplete="off"> 100
+                </label>
+            </div>
+            
+            <button type="button" class="btn btn-primary btn-big" ontouchstart="sendCommand('M18')">Motors Off</button>
+        </div>
+    </div>
+</div>
+
+<script>
+    var increment = 10;
+    
+    function setIncrement(i){
+        increment = i;
+    }
+    
+    function sendCommand(command){
+        machine.sendCommand(command);
+    }
+    
+    function home(axis){
+        machine.home(axis);
+    }
+    
+    function jog(axis, direction){
+        var feedrate = (axis === "Z"? settings.jog.zFeedrate : settings.jog.xyFeedrate);
+        machine.jogAxis(axis, direction, increment, feedrate);
+    }
+</script>

@@ -1,11 +1,17 @@
 <!DOCTYPE html>
 <html>
     <head>
-        <title>connection</title>
+        <title>mobile control</title>
         
-        <link href="node_modules/bootstrap/dist/css/bootstrap.min.css" rel="stylesheet">
+        <link href="node_modules/nouislider/distribute/nouislider.min.css" rel="stylesheet">
+        <link rel="stylesheet" href="node_modules/bootstrap/dist/css/bootstrap.min.css">
+        <link rel="stylesheet" href="node_modules/font-awesome/css/font-awesome.min.css">
+        <link href="style.css" rel="stylesheet">
         
+        <script src="settings.js"></script>
         <script type="text/javascript" src="node_modules/jquery/dist/jquery.min.js"></script>
+        <script type="text/javascript" src="node_modules/bootstrap/dist/js/bootstrap.min.js"></script>
+        <script src="node_modules/nouislider/distribute/nouislider.min.js"></script>
         <script src="machine.js"></script>
         
         <meta name="apple-mobile-web-app-capable" content="yes">
@@ -13,50 +19,424 @@
         <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no, user-scalable=no">
     </head>
     <body>
-        
-        <div style="padding: 15px;">
-            <h1 style="text-align: center;">Welcome</h1>
-            
-            <p>
-                1. Go to Settings->API in OctoPrint
-                </br>
-                2. Check "Enable" & "Enable CORS"
-                </br>
-                3. Save
-            <p>
-        
-            <input type="text" class="form-control" id="ip" style="margin-bottom: 8px;" placeholder="IP address">
-            <input type="text" class="form-control" id="apikey" style="margin-bottom: 8px;" placeholder="api key">
-            
-            <button class="btn btn-primary btn-lg btn-block" id="connect">Connect</button>
-            
-            <h2 id="status" hidden>Connecting...</h2>
+
+<div id='behavior' class='page'></div>
+<div id='custom' class='page'><header class="menu-bar">
+    <div class="menu-bar-title">
+        <div class="btn-group">
+            <button type="button" class="btn btn-secondary dropdown-toggle" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
+                Custom
+            </button>
+            <div class="dropdown-menu" style="width: 280px; margin-left: -90px;">
+                <a class="dropdown-item" href="#">Menu</a>
+                <div class="dropdown-divider"></div>
+                <a class="dropdown-item menu-item" href="javascript:switchPage('temperature')">Temperature</a>
+                <a class="dropdown-item menu-item" href="javascript:switchPage('jog')">Jog</a>
+                <a class="dropdown-item menu-item" href="javascript:switchPage('print')">Print</a>
+                <a class="dropdown-item menu-item" href="javascript:switchPage('custom')">Custom</a>
+            </div>
         </div>
+    </div>
+</header>
+
+<div class="content">
+    <div class="list-group" id="menu" style="margin-top: 10px;"></div>
+</div>
+
+</div>
+<div id='jog' class='page'><header class="menu-bar">
+    <div class="menu-bar-title">
+        <div class="btn-group">
+            <button type="button" class="btn btn-secondary dropdown-toggle" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
+                Jog
+            </button>
+            <div class="dropdown-menu" style="width: 280px; margin-left: -90px;">
+                <a class="dropdown-item" href="#">Menu</a>
+                <div class="dropdown-divider"></div>
+                <a class="dropdown-item menu-item" href="javascript:switchPage('temperature')">Temperature</a>
+                <a class="dropdown-item menu-item" href="javascript:switchPage('jog')">Jog</a>
+                <a class="dropdown-item menu-item" href="javascript:switchPage('print')">Print</a>
+                <a class="dropdown-item menu-item" href="javascript:switchPage('custom')">Custom</a>
+            </div>
+        </div>
+    </div>
+</header>
+
+<div class="content" style="padding: 60px; padding-left: 30px; padding-right: 15px; ">
+    
+    <div class="container">
+        <div class="row">
         
-        
-        
-        <script>
-            $("#ip").val(machine.ip);
-            $("#apikey").val(machine.apikey);
+            <div class="container" style="width: 50%; margin: 0; margin-bottom: 10px; float: left;">
+                <div class="row">
+                    <div class="col-xs-4"></div>
+                    <div class="col-xs-4">
+                        <button type="button" class="btn btn-primary btn-lg" ontouchstart="jog('Y', 1)"> <i class="fa fa-arrow-up"></i> </button>
+                    </div>
+                    <div class="col-xs-4"></div>
+                </div>
+                <div class="row" style="margin-top: 8px; margin-bottom: 8px;">
+                    <div class="col-xs-4">
+                        <button type="button" class="btn btn-primary btn-lg" ontouchstart="jog('X', -1)"> <i class="fa fa-arrow-left"></i> </button>
+                    </div>
+                    <div class="col-xs-4">
+                        <button type="button" class="btn btn-primary btn-lg" ontouchstart="home('XY')"> <i class="fa fa-home"></i> </button>
+                    </div>
+                    <div class="col-xs-4">
+                        <button type="button" class="btn btn-primary btn-lg" ontouchstart="jog('X', 1)"> <i class="fa fa-arrow-right"></i> </button>
+                    </div>
+                </div>
+                <div class="row">
+                    <div class="col-xs-4"></div>
+                    <div class="col-xs-4">
+                        <button type="button" class="btn btn-primary btn-lg" ontouchstart="jog('Y', -1)"> <i class="fa fa-arrow-down"></i> </button>
+                    </div>
+                    <div class="col-xs-4"></div>
+                </div>
+            </div>
             
-            $("#connect").click(function(){
-                machine.setIp( $("#ip").val() );
-                machine.setApikey( $("#apikey").val() );
-                
-                connect();
-                $("#status").show();
-            });
+            <div class="container" style="width: 75px; margin: 0; margin-bottom: 10px; margin-right: 40px; float: right;">
+                <div class="row">
+                    <button type="button" class="btn btn-primary btn-lg" ontouchstart="jog('Z', 1)"> <i class="fa fa-arrow-up"></i> </button>
+                </div>
+                <div class="row" style="margin-top: 8px; margin-bottom: 8px;">
+                    <button type="button" class="btn btn-primary btn-lg" ontouchstart="home('Z')"> <i class="fa fa-home"></i> </button>
+                </div>
+                <div class="row">
+                    <button type="button" class="btn btn-primary btn-lg" ontouchstart="jog('Z', -1)"> <i class="fa fa-arrow-down"></i> </button>
+                </div>
+            </div>
             
-            function connect(){
-                $.ajaxSetup({headers:{"X-Api-Key" : machine.apikey}});
-                $.getJSON("http://"+machine.ip+"/api/version",function(json){
-                    console.log(json);
-                    $("#status").text("connected");
-                    window.location.href = "temperature.html";
-                }).error(function() {
-                    $("#status").text("failed to connect");
-                });
+        </div>
+        <div class="row">
+            <div class="btn-group btn-group-lg" data-toggle="buttons">
+                <label class="btn btn-primary" ontouchstart="setIncrement(0.1)">
+                    <input type="radio" autocomplete="off"> 0.1
+                </label>
+                <label class="btn btn-primary" ontouchstart="setIncrement(1)">
+                    <input type="radio" autocomplete="off"> 1
+                </label>
+                <label class="btn btn-primary active" ontouchstart="setIncrement(10)">
+                    <input type="radio" autocomplete="off" checked> 10
+                </label>
+                <label class="btn btn-primary" ontouchstart="setIncrement(100)">
+                    <input type="radio" autocomplete="off"> 100
+                </label>
+            </div>
+            
+            <button type="button" class="btn btn-primary btn-big" ontouchstart="sendCommand('M18')">Motors Off</button>
+        </div>
+    </div>
+</div>
+
+</div>
+<div id='print' class='page'>
+<header class="menu-bar">
+    <div class="menu-bar-title">
+        <div class="btn-group">
+            <button type="button" class="btn btn-secondary dropdown-toggle" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
+                Print
+            </button>
+            <div class="dropdown-menu" style="width: 280px; margin-left: -90px;">
+                <a class="dropdown-item" href="#">Menu</a>
+                <div class="dropdown-divider"></div>
+                <a class="dropdown-item menu-item" href="javascript:switchPage('temperature')">Temperature</a>
+                <a class="dropdown-item menu-item" href="javascript:switchPage('jog')">Jog</a>
+                <a class="dropdown-item menu-item" href="javascript:switchPage('print')">Print</a>
+                <a class="dropdown-item menu-item" href="javascript:switchPage('custom')">Custom</a>
+            </div>
+        </div>
+    </div>
+</header>
+
+<div class="content">
+    <div class="list-group" id="files" style="margin-top: 8px;"></div>
+    
+    <div id="printing" class="" style="text-align: center; padding: 15px;">
+        <h4 id="hotend"></h4>
+        <h4 id="bed"></h4>
+        
+        <progress class="progress" id="progress" value="0" max="100"><h3 id="alternate-progress"></h3></progress>
+        <h3 id="filename"></h3>
+        
+        <button class="btn btn-lg btn-danger" id="cancel" ontouchstart="jobOperation('cancel')">  <span class="icon icon-stop"></span> Cancel</button>
+        <button class="btn btn-lg btn-primary" id="pause" ontouchstart="jobOperation('pause')">Pause</button>
+    </div>
+</div>
+
+</div>
+<div id='reconnect' class='page'><div style="text-align: center; padding: 15px;">
+    <h1>Unable to Connect</h1>
+    
+    <br>
+    
+    <p>Make sure your OctoPrint server is up and you are on the same network as it.</p>
+    
+    <br>
+    
+    <a class="btn btn-primary btn-lg btn-block" href="javascript:window.location.href='../connect.html'">Edit Connection Info</a>
+    
+    <h2 id="status" hidden>Connecting...</h2>
+</div>
+
+</div>
+<div id='temperature' class='page'><header class="menu-bar">
+    <div class="menu-bar-title">
+        <div class="btn-group">
+            <button type="button" class="btn btn-secondary dropdown-toggle" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
+                Temperature
+            </button>
+            <div class="dropdown-menu" style="width: 280px; margin-left: -90px;">
+                <a class="dropdown-item" href="#">Menu</a>
+                <div class="dropdown-divider"></div>
+                <a class="dropdown-item menu-item" href="javascript:switchPage('temperature')">Temperature</a>
+                <a class="dropdown-item menu-item" href="javascript:switchPage('jog')">Jog</a>
+                <a class="dropdown-item menu-item" href="javascript:switchPage('print')">Print</a>
+                <a class="dropdown-item menu-item" href="javascript:switchPage('custom')">Custom</a>
+            </div>
+        </div>
+    </div>
+</header>
+
+<div class="content" style="margin-top: 8px;">
+    
+    <!-- Hotend -->
+    <div style="width: 100%; height:50%;">
+        <div class="container">
+            <div class="row" style="height: 40px;">
+                <p class="col-xs-8" id="hotendTemp" style="font-size: 130%; text-decoration: none;">0C/0C</p>
+                <div class="col-xs-4 btn-group">
+                    <button class="btn btn-danger" style="width:50%; float: left;"  ontouchstart="setHeaterOff('hotend')">Off</button>
+                    <button class="btn btn-primary" style="width:50%;"  ontouchstart="setTemp('hotend')">Set</button>
+                </div>
+            </div>
+        </div>
+        <div  id="hotendRange" style="width: 300px; margin-left: 75px; margin-top: 30px;"></div>
+    </div>
+    
+    <!-- Bed -->
+    <div style="width: 100%; height:50%; margin-top: 10px;">
+        <div class="container">
+            <div class="row" style="height: 40px;">
+                <p class="col-xs-8" id="bedTemp" style="font-size: 130%; text-decoration: none;">0C/0C</p>
+                <div class="col-xs-4 btn-group">
+                    <button class="btn btn-danger" style="width:50%; float: left;"  ontouchstart="setHeaterOff('bed')">Off</button>
+                    <button class="btn btn-primary" style="width:50%;"  ontouchstart="setTemp('bed')">Set</button>
+                </div>
+            </div>
+        </div>
+        <div  id="bedRange" style="width: 300px; margin-left: 75px; margin-top: 35px;"></div>
+    </div>
+
+</div>
+
+
+
+</div>
+<script>
+    if(!machine.ip || !machine.apikey){
+        window.location.href = "connect.html";
+    }
+    
+    machine.connect();
+    
+    $(document).ready(function(){
+        $(".page").hide();
+        switchPage("print");
+    });
+    
+    function switchPage(page){
+        $(".page").hide();
+        $("#"+page).show();
+    }
+</script>
+<script>
+    $(document).ready(function(){
+        for(item in settings.custom){
+            $("#menu").append("<button type='button' class='list-group-item' ontouchstart='"+(typeof(settings.custom[item].command) === "undefined" ? "sendCommands" : "sendCommand")+"("+(typeof(settings.custom[item].command) === "undefined" ? JSON.stringify(settings.custom[item].commands) : "&quot;" + settings.custom[item].command + "&quot;")+")'>"+settings.custom[item].title+"</button>");
+        }
+    });
+    
+    function sendCommand(command){
+        machine.sendCommand(command);
+    }
+    
+    function sendCommands(commands){
+        machine.sendCommands(commands);
+    }
+</script>
+<script>
+    var increment = 10;
+    
+    function setIncrement(i){
+        increment = i;
+    }
+    
+    function sendCommand(command){
+        machine.sendCommand(command);
+    }
+    
+    function home(axis){
+        machine.home(axis);
+    }
+    
+    function jog(axis, direction){
+        var feedrate = (axis === "Z"? settings.jog.zFeedrate : settings.jog.xyFeedrate);
+        machine.jogAxis(axis, direction, increment, feedrate);
+    }
+</script>
+<script>
+    var printing = false;
+    
+    $(document).ready(function(){
+        displayFiles();
+        $("#printing").hide();
+    });
+    
+    machine.addCallback("updatePrintInfo", updatePrintInfo);
+    
+    window.setInterval(function(){
+        if(!printing){
+            displayFiles();
+        }
+    }, 10000);
+    
+    function displayFiles(){
+        $("#files").empty();
+        $.ajaxSetup({headers:{"X-Api-Key" : machine.apikey}, async: false});
+        $.getJSON("http://"+machine.ip+"/api/files", function(e){
+            for(index in e.files){
+                $("#files").append("<button type='button' class='list-group-item' onclick='printFile(&quot;"+e.files[index].name+"&quot;, "+(e.files[index].origin === "local" ? true :  false)+")'>"+e.files[index].name+"</button>");
             }
-        </script>
+        });
+    }
+    
+    function updatePrintInfo(info){
+        if(info.current){
+            if(info.current.state.flags.printing || info.current.state.flags.paused){
+                $("#printing").show();
+                $("#files").hide();
+                
+                if(info.current.temps && info.current.temps.length){
+                    $("#hotend").text("Hotend: " + info.current.temps[0].tool0.actual+"C/"+info.current.temps[0].tool0.target+"C");
+                    $("#bed").text("Bed: " + info.current.temps[0].bed.actual+"C/"+info.current.temps[0].bed.target+"C");
+                }
+                
+                $("#filename").text(info.current.job.file.name);
+                $("#progress").attr("value", info.current.progress.completion);
+                $("#alternate-progress").html(Math.round(info.current.progress.completion)+"%");
+                
+                $("#pause").html(info.current.state.flags.paused ? "<span class='icon icon-play'></span> Resume" : "<span class='icon icon-pause'></span> Pause");
+                
+                printing = true;
+            }else {
+                $("#files").show();
+                $("#printing").hide();
+                
+                printing = false;
+            }  
+        }
+    }
+    
+    function jobOperation(operation){
+        machine.jobOperation(operation);
+    }
+    
+    function printFile(filename, local){
+        if(confirm("Do you want to print " + filename + "?")){
+            machine.printFile(filename, local);
+        }
+    }
+</script>
+<script>
+    var ip = localStorage.getItem("ip");
+    var apikey = localStorage.getItem("apikey");
+    $("#ip").val(ip);
+    $("#apikey").val(apikey);
+    
+    $(document).ready(function(){
+        window.setInterval(function(){
+            reconnect();
+        }, 10000);
+    });
+    
+    function reconnect(){
+        $.ajaxSetup({headers:{"X-Api-Key" : apikey}});
+        $.getJSON("http://"+ip+"/api/version",function(json){
+            console.log(json);
+            $("#status").text("connected");
+            switchPage("temperature")
+        }).error(function() {
+            $("#status").text("failed to connect");
+        });
+    }
+    
+    // prevent elastic scrolling
+    document.body.addEventListener("touchmove", function(event) {
+        event.preventDefault();
+    });
+</script>
+<script>
+    var hotendRange, bedRange;
+    
+    $(document).ready(function(){
+        hotendRange = document.getElementById('hotendRange');
+    
+        noUiSlider.create(hotendRange, {
+            start: 0,
+            step: 5,
+            connect: "lower",
+            direction: 'ltr',
+            orientation: 'horizontal',
+            behaviour: 'tap-drag',
+            tooltips: true,
+            range: {
+                'min': 0,
+                'max': settings.temperature.hotendMax
+            }
+        });
+    });
+    
+    window.onload = function(){
+        bedRange = document.getElementById('bedRange');
+        
+        noUiSlider.create(bedRange, {
+            start: 50,
+            step: 2,
+            connect: "lower",
+            direction: 'ltr',
+            orientation: 'horizontal',
+            behaviour: 'tap-drag',
+            tooltips: true,
+            range: {
+                'min': 0,
+                'max': settings.temperature.bedMax
+            }
+        });
+    };
+    
+    machine.addCallback("updateTemperature", updateTemperature);
+    
+    function setTemp(tool){
+        machine.sendCommand((tool === "hotend" ? "M104 " : "M140" ) + " S" + (tool === "hotend" ? $("#hotendRange .noUi-tooltip").text() : $("#bedRange .noUi-tooltip").text() ));
+    }
+    
+    function setHeaterOff(tool){
+        machine.sendCommand((tool === "hotend" ? "M104 " : "M140" ) + " S0");
+    }
+    
+    function updateTemperature(info){
+        if(info.current && info.current.temps && info.current.temps.length){
+            $("#hotendTemp").html("Hotend: " + info.current.temps[0].tool0.actual+"C/"+info.current.temps[0].tool0.target+"C" + (info.current.temps[0].tool0.target > 0 ? ' <span class="label label-danger">Heating</span>' : ""));
+            $("#bedTemp").html("Bed: " + info.current.temps[0].bed.actual+"C/"+info.current.temps[0].bed.target+"C" + (info.current.temps[0].bed.target > 0 ? ' <span class="label label-danger">Heating</span>' : ""));
+        }
+    }
+    
+    function sendCommand(command){
+        machine.sendCommand(command);
+    }
+</script>        
+        
+        
     </body>
 </html>
