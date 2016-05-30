@@ -24,7 +24,7 @@
                 </br>
                 3. Save
             <p>
-        
+                
             <input type="text" class="form-control" id="ip" style="margin-bottom: 8px;" placeholder="IP address">
             <input type="text" class="form-control" id="apikey" style="margin-bottom: 8px;" placeholder="api key">
             
@@ -37,6 +37,10 @@
             $("#ip").val(machine.ip);
             $("#apikey").val(machine.apikey);
             
+            if(machine.ip && machine.apikey){
+                connect();
+            }
+            
             $("#connect").click(function(){
                 machine.setIp( $("#ip").val() );
                 machine.setApikey( $("#apikey").val() );
@@ -48,7 +52,6 @@
             function connect(){
                 $.ajaxSetup({headers:{"X-Api-Key" : machine.apikey}});
                 $.getJSON("http://"+machine.ip+"/api/version",function(json){
-                    console.log(json);
                     $("#status").text("connected");
                     window.location.href = "index.html";
                 }).error(function() {

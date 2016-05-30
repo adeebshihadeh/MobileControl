@@ -4,12 +4,9 @@ from os import listdir
 from os.path import isfile, join
 import os.path
 
-
 print "Searching for files...\n"
 path = "./pages"
-all_files = [
-    f for f in listdir(path)  if isfile(join(path, f))
- ]
+all_files = [ f for f in listdir(path)  if isfile(join(path, f)) ]
  
 files = []
 
@@ -24,9 +21,6 @@ for file in all_files:
 for file in files:
     with open(path+"/"+file, "r") as file:
         files_content.append(file.read().replace('\n', ''))
-
-with open("base.html", "r") as file:
-    base_html = file.read()
 
 with open("base.html", "r") as file:
     for line in file.readlines():
