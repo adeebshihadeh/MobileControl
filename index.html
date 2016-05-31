@@ -244,8 +244,8 @@
     
     $(document).ready(function(){
         $(".page").hide();
-        switchPage("print");
-        currentPage = "print";
+        switchPage(settings.behavior.defaultPage);
+        currentPage = settings.behavior.defaultPage;
     });
     
     function switchPage(page){
@@ -256,8 +256,9 @@
     
     // prevent elastic scrolling
     document.body.addEventListener("touchmove", function(event) {
-        if(currentPage === "jog" || currentPage === "reconnect" || currentPage === "temperature")
-        event.preventDefault();
+        if(currentPage === "jog" || currentPage === "reconnect" || currentPage === "temperature"){
+            event.preventDefault();
+        }
     });
 </script>
 <script>
@@ -312,9 +313,10 @@
     }, 10000);
     
     function displayFiles(){
-        $("#files").empty();
-        $.ajaxSetup({headers:{"X-Api-Key" : machine.apikey}, async: false});
+        
+        $.ajaxSetup({headers:{"X-Api-Key" : machine.apikey}});
         $.getJSON("http://"+machine.ip+"/api/files", function(e){
+            $("#files").empty();
             for(index in e.files){
                 $("#files").append("<button type='button' class='list-group-item' onclick='printFile(&quot;"+e.files[index].name+"&quot;, "+(e.files[index].origin === "local" ? true :  false)+")'>"+e.files[index].name+"</button>");
             }
@@ -372,7 +374,7 @@
         $.getJSON("http://"+machine.ip+"/api/version",function(json){
             console.log(json);
             $("#status").text("connected");
-            switchPage("temperature");
+            switchPage(settings.behavior.defaultPage);
         }).error(function() {
             $("#status").text("failed to connect");
         });

@@ -49,9 +49,10 @@
     }, 10000);
     
     function displayFiles(){
-        $("#files").empty();
-        $.ajaxSetup({headers:{"X-Api-Key" : machine.apikey}, async: false});
+        
+        $.ajaxSetup({headers:{"X-Api-Key" : machine.apikey}});
         $.getJSON("http://"+machine.ip+"/api/files", function(e){
+            $("#files").empty();
             for(index in e.files){
                 $("#files").append("<button type='button' class='list-group-item' onclick='printFile(&quot;"+e.files[index].name+"&quot;, "+(e.files[index].origin === "local" ? true :  false)+")'>"+e.files[index].name+"</button>");
             }

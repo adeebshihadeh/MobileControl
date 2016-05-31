@@ -9,8 +9,8 @@
     
     $(document).ready(function(){
         $(".page").hide();
-        switchPage("print");
-        currentPage = "print";
+        switchPage(settings.behavior.defaultPage);
+        currentPage = settings.behavior.defaultPage;
     });
     
     function switchPage(page){
@@ -21,7 +21,8 @@
     
     // prevent elastic scrolling
     document.body.addEventListener("touchmove", function(event) {
-        if(currentPage === "jog" || currentPage === "reconnect" || currentPage === "temperature")
-        event.preventDefault();
+        if(currentPage === "jog" || currentPage === "reconnect" || currentPage === "temperature"){
+            event.preventDefault();
+        }
     });
 </script>

@@ -34,19 +34,7 @@ var machine = {
         };
     },
     addCallback: function(name, func){
-        console.log(typeof(func));
         this.callbacks[name] = func;
-    },
-    testConenction: function(){
-        console.log(this.ip)
-        var i = this.ip;
-        var ap = this.apikey;
-        $.ajaxSetup({headers:{"X-Api-Key" : ap}, async: true});
-        $.getJSON("http://"+i+"/api/version",function(json){
-            
-        }).error(function() {
-            return "false";
-        });
     },
     sendCommand: function(command){
         $.ajaxSetup({headers:{"X-Api-Key" : this.apikey}});
@@ -71,13 +59,6 @@ var machine = {
     },
     home: function(axis){
         this.sendCommand("G28 " + axis);
-    },
-    getFiles: function(){
-        $.ajaxSetup({headers:{"X-Api-Key" : this.apikey}, async: false});
-        $.getJSON("http://"+this.ip+"/api/files", function(e){
-            console.log(e);
-            return e.files;
-        });
     },
     printFile: function(filename, local){
         $.ajaxSetup({headers:{"X-Api-Key" : this.apikey}});

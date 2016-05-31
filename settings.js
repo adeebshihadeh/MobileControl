@@ -7,6 +7,9 @@ var settings = {
         "hotendMax": 260, // max hotend temperature
         "bedMax": 120 // max bed temperature
     },
+    "behavior": {
+        "defaultPage": "print" // options are print, temperature, custom, and jog  
+    },
     "custom": [
         {
             "title": "Fan On",

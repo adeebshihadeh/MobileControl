@@ -26,7 +26,7 @@
         $.getJSON("http://"+machine.ip+"/api/version",function(json){
             console.log(json);
             $("#status").text("connected");
-            switchPage("temperature");
+            switchPage(settings.behavior.defaultPage);
         }).error(function() {
             $("#status").text("failed to connect");
         });
