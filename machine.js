@@ -3,6 +3,8 @@ var machine = {
     apikey: localStorage.getItem("apikey"),
     rawInfo: {},
     callbacks: {},
+    lastMessage: 0,
+    timeout: 5000, // time in milliseconds to timeout websocket if no new messages are received within this time
     setIp: function(ip){
         this.ip = ip;
         localStorage.setItem("ip", this.ip);
@@ -22,6 +24,8 @@ var machine = {
             console.log("you have mail");
             
             rawInfo = JSON.parse(e.data);
+
+            lastMessage = new Date().getTime();
             
             for(callback in machine.callbacks){
                 machine.callbacks[callback](rawInfo);
@@ -35,6 +39,13 @@ var machine = {
     },
     addCallback: function(name, func){
         this.callbacks[name] = func;
+    },
+    socketTimeout: function(){
+        var currentTime = new Date().getTime();
+        if((currentTime - this.lastMessage) < this.timeout){
+            alert("socket timed out");
+            this.socket.close();
+        }
     },
     sendCommand: function(command){
         $.ajaxSetup({headers:{"X-Api-Key" : this.apikey}});
@@ -82,3 +93,5 @@ var machine = {
         return rawInfo;
     }
 };
+
+setInterval(machine.socketTimeout, 500);
