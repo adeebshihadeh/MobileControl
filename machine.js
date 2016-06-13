@@ -4,7 +4,6 @@ var machine = {
     rawInfo: {},
     callbacks: {},
     lastMessage: 0,
-    timeout: 5000, // time in milliseconds to timeout websocket if no new messages are received within this time
     setIp: function(ip){
         this.ip = ip;
         localStorage.setItem("ip", this.ip);
@@ -41,8 +40,12 @@ var machine = {
         this.callbacks[name] = func;
     },
     socketTimeout: function(){
+        console.log("checking for timeout");
+
         var currentTime = new Date().getTime();
-        if((currentTime - this.lastMessage) < this.timeout){
+        var timeout = 5000; // time in milliseconds to timeout websocket if no new messages are received within this time
+        
+        if((currentTime - this.lastMessage) > this.timeout){
             alert("socket timed out");
             this.socket.close();
         }
