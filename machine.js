@@ -15,8 +15,12 @@ var machine = {
     connect: function(){
         this.socket = new WebSocket("ws://"+this.ip+"/sockjs/websocket");
         
+        var  _that = this;
+
         this.socket.onopen = function(){
             console.log("socket opened");  
+
+            window.setInterval(_that.socketTimeout, 500);
         };
         
         this.socket.onmessage = function(e){
@@ -43,10 +47,10 @@ var machine = {
         console.log("checking for timeout");
 
         var currentTime = new Date().getTime();
-        var timeout = 5000; // time in milliseconds to timeout websocket if no new messages are received within this time
+        var timeout = 8000; // time in milliseconds to timeout websocket if no new messages are received within this time
         
-        if((currentTime - this.lastMessage) > this.timeout){
-            alert("socket timed out");
+        if((currentTime - this.lastMessage) > timeout){
+            console.log("socket timed out");
             this.socket.close();
         }
     },
@@ -97,4 +101,4 @@ var machine = {
     }
 };
 
-setInterval(machine.socketTimeout, 500);
+// setInterval(machine.socketTimeout, 500);
