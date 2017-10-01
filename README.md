@@ -15,7 +15,7 @@ There are two easy ways to host a customized settings.js file. You can fork this
 
 # Installation
 
-##iOS
+## iOS
 
 * Open Safari
 * Go to your OctoPrint instance
