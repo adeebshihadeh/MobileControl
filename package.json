@@ -19,7 +19,7 @@
   "dependencies": {
     "bootstrap": "^4.0.0-alpha.2",
     "font-awesome": "^4.6.1",
-    "jquery": "^2.2.4",
+    "jquery": "^3.0.0",
     "nouislider": "^8.5.1"
   }
 }
